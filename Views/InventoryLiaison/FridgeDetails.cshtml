@@ -1,0 +1,93 @@
+﻿@model FridgeSystem.Models.ViewModels.FridgeDetailsViewModel
+
+<div class="form-container">
+    <h1 class="dashboard-title">Fridge Details</h1>
+
+    <div class="row">
+        <!-- Image Column -->
+        <div class="col-md-4 text-center">
+            <img src="~/images/@Model.FridgeImage" alt="@Model.FridgeName" class="img-fluid fridge-detail-image mb-3" />
+        </div>
+
+        <!-- Details Column -->
+        <div class="col-md-8">
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th>Name</th>
+                        <td>@Model.FridgeName</td>
+                    </tr>
+                    <tr>
+                        <th>Model</th>
+                        <td>@Model.Model</td>
+                    </tr>
+                    <tr>
+                        <th>Serial Number</th>
+                        <td>@Model.SerialNumber</td>
+                    </tr>
+                    <tr>
+                        <th>Category</th>
+                        <td>@Model.Category</td>
+                    </tr>
+                    <tr>
+                        <th>Color</th>
+                        <td>@Model.FridgeColor</td>
+                    </tr>
+                    <tr>
+                        <th>Description</th>
+                        <td>@Model.FridgeDescription</td>
+                    </tr>
+                    <tr>
+                        <th>Warehouse</th>
+                        <td>@Model.WarehouseName</td>
+                    </tr>
+                    <tr>
+                        <th>Supplier</th>
+                        <td>@Model.SupplierName</td>
+                    </tr>
+                    <tr>
+                        <th>Stock Quantity</th>
+                        <td>@Model.StockQuantity</td>
+                    </tr>
+                    <tr>
+                        <th>Availability</th>
+                        <td>@(Model.IsAvailable ? "Available" : "Not Available")</td>
+                    </tr>
+                    <tr>
+                        <th>Purchase Date</th>
+                        <td>@Model.PurchaseDate?.ToString("yyyy-MM-dd")</td>
+                    </tr>
+                    <tr>
+                        <th>Warranty Expiry</th>
+                        <td>@Model.WarrantyExpiryDate?.ToString("yyyy-MM-dd")</td>
+                    </tr>
+                    <tr>
+                        <th>Delivery Date</th>
+                        <td>@Model.DeliveryDate?.ToString("yyyy-MM-dd")</td>
+                    </tr>
+                    <tr>
+                        <th>Created Date</th>
+                        <td>@Model.CreatedDate?.ToString("yyyy-MM-dd")</td>
+                    </tr>
+                    <tr>
+                        <th>Last Updated</th>
+                        <td>@Model.UpdatedDate?.ToString("yyyy-MM-dd")</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Action Buttons -->
+            <div class="mt-3 d-flex gap-2 flex-wrap">
+                <a asp-controller="InventoryLiaison" asp-action="Dashboard" class="btn btn-secondary">Back to Dashboard</a>
+                <a asp-action="EditFridgeUnit" asp-route-id="@Model.FridgeId" class="btn btn-warning">Edit Fridge</a>
+                <a asp-controller="InventoryLiaison" asp-action="ScrapFridge" asp-route-id="@Model.FridgeId" class="btn btn-danger">Scrap Fridge</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .fridge-detail-image {
+        max-width: 300px;
+    }
+</style>

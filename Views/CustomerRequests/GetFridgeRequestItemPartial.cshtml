@@ -1,0 +1,33 @@
+﻿@model FridgeSystem.Models.FridgeRequestItemViewModel
+@{
+    int index = (int)ViewData["index"];
+}
+
+<div class="fridge-item-row card mb-3 p-3 bg-light" data-index="@index">
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label class="control-label">Fridge Model</label>
+            <input type="text" class="form-control" value="@Model.Model" readonly />
+            <input type="hidden" name="RequestedFridges[@index].FridgeId" value="@Model.FridgeId" />
+        </div>
+
+        <div class="col-md-4">
+            <label class="control-label">Quantity</label>
+            <input type="number" class="form-control" min="1"
+                   name="RequestedFridges[@index].Quantity"
+                   value="@Model.Quantity" />
+        </div>
+
+        <div class="col-md-2 d-flex align-items-end">
+            <button type="button" class="btn btn-danger remove-fridge-item w-100">Remove</button>
+        </div>
+    </div>
+
+    @* Optional: show category or image *@
+    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+    {
+        <div class="mt-2 text-center">
+            <img src="@Model.ImageUrl" class="img-thumbnail" style="max-height:120px;" />
+        </div>
+    }
+</div>

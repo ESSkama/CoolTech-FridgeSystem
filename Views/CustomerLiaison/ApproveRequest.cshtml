@@ -1,0 +1,57 @@
+﻿@model FridgeSystem.Models.FridgeRequestViewModel
+
+@{
+    ViewData["Title"] = "Approve Fridge Request";
+}
+
+<h1 class="dashboard-title">Approve Fridge Request</h1>
+
+<div style="margin-bottom:10px;">
+    <a asp-action="FridgeRequests" class="btn btn-secondary">← Back to Requests</a>
+</div>
+
+<div class="form-container" style="max-width:600px; margin:auto;">
+    <form asp-action="ApproveRequest" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="RequestId" />
+
+        <div class="mb-3">
+            <label>Customer</label>
+            <input class="form-control" value="@Model.BusinessName" readonly />
+        </div>
+
+        <div class="mb-3">
+            <label>Branch</label>
+            <input class="form-control" value="@Model.BranchName" readonly />
+        </div>
+
+        <div class="mb-3">
+            <label>Contact Number</label>
+            <input class="form-control" value="@Model.ContactNumber" readonly />
+        </div>
+
+        <div class="mb-3">
+            <label>Preferred Pickup</label>
+            <input class="form-control" value="@Model.PreferredPickup.ToShortDateString()" readonly />
+        </div>
+
+        <div class="mb-3">
+            <label>Special Instructions</label>
+            <textarea class="form-control" name="notes">@Model.SpecialInstructions</textarea>
+        </div>
+
+        <h5>Requested Fridges</h5>
+        <ul>
+            @foreach (var f in Model.RequestedFridges)
+            {
+                <li>@f.Model - Quantity: @f.Quantity</li>
+            }
+        </ul>
+
+        <div style="margin-top:10px;">
+            <button type="submit" class="btn btn-success">Approve Request</button>
+            <a asp-action="FridgeRequests" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+

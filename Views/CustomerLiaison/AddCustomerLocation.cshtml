@@ -1,0 +1,184 @@
+﻿@model List<FridgeSystem.Models.CustomerLocationViewModel>
+
+@{
+    ViewData["Title"] = "Add Branch";
+   
+    var businessId = ViewBag.BusinessId as int? ?? 0;
+    var customerName = ViewBag.CustomerName as string ?? "Customer";
+}
+
+<h1 class="dashboard-title">@customerName - Add Branch</h1>
+
+<div style="margin-bottom: 10px;">
+    <a asp-controller="CustomerLiaison" asp-action="CustomerLocations" asp-route-businessId="@businessId"
+       class="btn btn-secondary" style="padding: 6px 14px; font-size: 15px;">← Back to Locations</a>
+</div>
+
+<div class="form-container" style="max-width: 650px; margin:auto;">
+    <form asp-action="AddLocation" method="post">
+        @Html.AntiForgeryToken()
+        <div id="branchesContainer">
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                <div class="branch-form border p-3 mb-3 rounded shadow-sm">
+                    @* Hidden fields for MVC model binding (must be inside the form) *@
+                    <input asp-for="@Model[i].BusinessId" type="hidden" />
+
+                    
+                    <div class="form-check mb-2">
+                        <input asp-for="@Model[i].IsActive" class="form-check-input" />
+                        <label asp-for="@Model[i].IsActive" class="form-check-label">Active</label>
+                    </div>
+
+                    <div class="mb-2">
+                        <label asp-for="@Model[i].BranchName" class="form-label"></label>
+                        <input asp-for="@Model[i].BranchName" class="form-control" />
+                        <span asp-validation-for="@Model[i].BranchName" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-2">
+                        <label asp-for="@Model[i].AddressLine1" class="form-label"></label>
+                        <input asp-for="@Model[i].AddressLine1" class="form-control" />
+                        <span asp-validation-for="@Model[i].AddressLine1" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-2">
+                        <label asp-for="@Model[i].AddressLine2" class="form-label"></label>
+                        <input asp-for="@Model[i].AddressLine2" class="form-control" />
+                        <span asp-validation-for="@Model[i].AddressLine2" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-2">
+                        <label asp-for="@Model[i].City" class="form-label"></label>
+                        <input asp-for="@Model[i].City" class="form-control" />
+                        <span asp-validation-for="@Model[i].City" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-2">
+                        <label asp-for="@Model[i].Province" class="form-label"></label>
+                        <input asp-for="@Model[i].Province" class="form-control" />
+                        <span asp-validation-for="@Model[i].Province" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-2">
+                        <label asp-for="@Model[i].Postcode" class="form-label"></label>
+                        <input asp-for="@Model[i].Postcode" class="form-control" />
+                        <span asp-validation-for="@Model[i].Postcode" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-2">
+                        <label asp-for="@Model[i].Telephone" class="form-label"></label>
+                        <input asp-for="@Model[i].Telephone" class="form-control" />
+                        <span asp-validation-for="@Model[i].Telephone" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-2">
+                        <label asp-for="@Model[i].ContactPerson" class="form-label"></label>
+                        <input asp-for="@Model[i].ContactPerson" class="form-control" />
+                        <span asp-validation-for="@Model[i].ContactPerson" class="text-danger"></span>
+                    </div>
+
+                    <button type="button" class="btn btn-danger removeBranchBtn mt-2">Remove Branch</button>
+                </div>
+            }
+        </div>
+
+        <div class="mt-3 d-flex gap-2">
+            <button type="button" id="addBranchBtn" class="btn btn-primary">Add Another Branch</button>
+            <button type="submit" class="btn btn-success">Save All</button>
+            <a asp-action="CustomerLocations" asp-route-businessId="@businessId" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        const branchesContainer = document.getElementById("branchesContainer");
+
+        function attachRemoveEvent(branchForm) {
+            const removeBtn = branchForm.querySelector(".removeBranchBtn");
+            removeBtn.addEventListener("click", () => {
+                const forms = branchesContainer.querySelectorAll(".branch-form");
+                if (forms.length > 1) {
+                    branchForm.remove();
+                    reindexForms();
+                    // Re-parse validation on the whole form after removal
+                    $('form').data('validator', null);
+                    $.validator.unobtrusive.parse('form');
+                } else {
+                    alert("At least one branch must remain.");
+                }
+            });
+        }
+
+        function reindexForms() {
+            branchesContainer.querySelectorAll(".branch-form").forEach((form, idx) => {
+                form.querySelectorAll("input, label, span").forEach(el => {
+                    // Update name attribute (for submission)
+                    if (el.name) el.name = el.name.replace(/\[\d+\]/, `[${idx}]`);
+
+                    // Update id attribute (for JavaScript/CSS)
+                    if (el.id) el.id = el.id.replace(/\_\d+/, `_${idx}`);
+
+                    // Update htmlFor attribute (for labels)
+                    if (el.htmlFor) el.htmlFor = el.htmlFor.replace(/\_\d+/, `_${idx}`);
+
+                    // Update data-valmsg-for (for validation messages)
+                    if (el.getAttribute("data-valmsg-for"))
+                        el.setAttribute("data-valmsg-for", el.getAttribute("data-valmsg-for").replace(/\[\d+\]/, `[${idx}]`));
+                });
+            });
+        }
+
+        document.getElementById("addBranchBtn").addEventListener("click", () => {
+            const clone = branchesContainer.querySelector(".branch-form").cloneNode(true);
+            const index = branchesContainer.querySelectorAll(".branch-form").length; // Get the new index
+
+            clone.querySelectorAll("input, span").forEach(input => {
+                if (input.type === "checkbox") {
+                    input.checked = true; // Set new branch active by default
+                    input.name = input.name.replace(/\[\d+\]/, `[${index}]`);
+                    input.id = input.id.replace(/\_\d+/, `_${index}`);
+                }
+                else if (input.type === "hidden" && input.name.includes("IsActive")) {
+                    // Hidden field auto-generated by asp-for is the *only* hidden field for IsActive.
+                    input.value = "false"; // This ensures unchecked is false
+                    input.name = input.name.replace(/\[\d+\]/, `[${index}]`);
+                    input.id = input.id.replace(/\_\d+/, `_${index}`);
+                }
+                else if (input.type === "hidden" && input.name.includes("BusinessId")) {
+                    // Keep BusinessId hidden value
+                    input.name = input.name.replace(/\[\d+\]/, `[${index}]`);
+                    input.id = input.id.replace(/\_\d+/, `_${index}`);
+                }
+                else {
+                    // Clear all other values and remove validation errors
+                    input.value = "";
+                    input.name = input.name.replace(/\[\d+\]/, `[${index}]`);
+                    input.id = input.id.replace(/\_\d+/, `_${index}`);
+                    $(input).removeClass('input-validation-error');
+                }
+                $(input).data("val", false); // Clear validation data
+                $(input).removeData("val-state");
+            });
+
+            // Re-index labels and spans (validation messages)
+            clone.querySelectorAll("label, span").forEach(el => {
+                if (el.htmlFor) el.htmlFor = el.htmlFor.replace(/\_\d+/, `_${index}`);
+                if (el.getAttribute("data-valmsg-for"))
+                    el.setAttribute("data-valmsg-for", el.getAttribute("data-valmsg-for").replace(/\[\d+\]/, `[${index}]`));
+                if (el.classList.contains("text-danger")) el.innerHTML = ""; // Clear validation messages
+            });
+
+            branchesContainer.appendChild(clone);
+            attachRemoveEvent(clone);
+            // Re-parse validation on the new form element
+            $.validator.unobtrusive.parse(clone);
+        });
+
+        // Initialize remove events for existing forms
+        branchesContainer.querySelectorAll(".branch-form").forEach(form => attachRemoveEvent(form));
+    </script>
+}

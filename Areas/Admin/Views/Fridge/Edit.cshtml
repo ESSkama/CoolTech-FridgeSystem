@@ -1,0 +1,111 @@
+﻿@model FridgeSystem.Models.FridgeCreateEditViewModel
+
+@{
+    ViewData["Title"] = "Edit Fridge";
+}
+
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">@ViewData["Title"]</h1>
+        <hr />
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Edit" method="post"  enctype="multipart/form-data" >
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            <input type="hidden" asp-for="FridgeId" /> @* Hidden field for ID *@
+
+            <div class="form-group mb-3">
+                <label asp-for="Model" class="form-label"></label>
+                <input asp-for="Model" class="form-control" />
+                <span asp-validation-for="Model" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="SerialNumber" class="form-label"></label>
+                <input asp-for="SerialNumber" class="form-control" />
+                <span asp-validation-for="SerialNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Specification" class="form-label"></label>
+                <textarea asp-for="Specification" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Specification" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="FridgeColor" class="form-label"></label>
+                <input asp-for="FridgeColor" class="form-control" />
+                <span asp-validation-for="FridgeColor" class="text-danger"></span>
+            </div>
+           <div class="form-group mb-3">
+    <label class="form-label" asp-for="FridgeImage">Upload Image</label>
+    
+    @if (!string.IsNullOrEmpty(Model.FridgeImage))
+    {
+        <div class="mb-2">
+            <img src="@Model.FridgeImage" alt="Current Image" style="height:150px; object-fit:cover;" />
+        </div>
+    }
+
+    <input class="form-input" asp-for="FridgeImageFile" type="file" />
+    <span asp-validation-for="FridgeImageFile" class="text-danger"></span>
+</div>
+            <div class="form-group mb-3">
+                <label asp-for="StockQuantity" class="form-label"></label>
+                <input asp-for="StockQuantity" class="form-control" />
+                <span asp-validation-for="StockQuantity" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check mb-3">
+                <input class="form-check-input" asp-for="IsAvailable" />
+                <label class="form-check-label" asp-for="IsAvailable"></label>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="PurchaseDate" class="form-label"></label>
+                <input asp-for="PurchaseDate" class="form-control" type="date" />
+                <span asp-validation-for="PurchaseDate" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="WarrantyExpiryDate" class="form-label"></label>
+                <input asp-for="WarrantyExpiryDate" class="form-control" type="date" />
+                <span asp-validation-for="WarrantyExpiryDate" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="DeliveryDate" class="form-label"></label>
+                <input asp-for="DeliveryDate" class="form-control" type="date" />
+                <span asp-validation-for="DeliveryDate" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Category" class="form-label"></label>
+                <select asp-for="Category" class="form-select" asp-items="Html.GetEnumSelectList<FridgeCategory>()">
+                    <option value="">-- Select Category --</option>
+                </select>
+                <span asp-validation-for="Category" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+    <label asp-for="WarehouseId" class="form-label"></label>
+    <select asp-for="WarehouseId" asp-items="@Model.Warehouses" class="form-select">
+        <option value="">-- Select Warehouse --</option>
+    </select>
+    <span asp-validation-for="WarehouseId" class="text-danger"></span>
+</div>
+
+            <div class="form-group mb-3">
+                <label asp-for="SelectedSupplierId" class="form-label"></label>
+                <select asp-for="SelectedSupplierId" asp-items="@Model.Suppliers" class="form-select">
+                    <option value="">-- Select Supplier --</option>
+                </select>
+                <span asp-validation-for="SelectedSupplierId" class="text-danger"></span>
+            </div>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+
+      
+    <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Back to List</a>
+
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

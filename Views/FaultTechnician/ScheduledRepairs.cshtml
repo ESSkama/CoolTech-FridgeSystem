@@ -1,0 +1,65 @@
+﻿@model IEnumerable<FridgeSystem.Models.FridgeFault>
+
+@{
+    ViewData["Title"] = "Scheduled Repairs";
+}
+
+<h2>Scheduled Repairs</h2>
+<hr />
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-warning">
+        No scheduled repairs at the moment.
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead class="table-info">
+                <tr>
+                    <th>Fault Description</th>
+                    <th>Customer</th>
+                    <th>Branch</th>
+                    <th>Fridge Serial</th>
+                    <th>Scheduled Date</th>
+                    <th>Scheduled Time</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var fault in Model)
+                {
+                    var schedule = fault.ServiceSchedules?
+                        .OrderByDescending(s => s.StartDate)
+                        .FirstOrDefault(); // latest schedule
+
+                    <tr>
+                        <td>@fault.FaultDescription</td>
+                        <td>@fault.CustomerFridge?.CustomerLocation?.Customer?.BusinessName</td>
+                        <td>@fault.CustomerFridge?.CustomerLocation?.BranchName</td>
+                        <td>@fault.CustomerFridge?.Fridge?.SerialNumber</td>
+
+                        @if (schedule != null)
+                        {
+                            <td>@schedule.StartDate.ToString("yyyy-MM-dd")</td>
+                            <td>@schedule.StartDate.ToString("HH:mm")</td>
+                        }
+                        else
+                        {
+                            <td colspan="2" class="text-muted">Not scheduled yet</td>
+                        }
+
+                        <td>
+                            <a href="@Url.Action("ServiceSchedule", "FaultTechnician", new { id = fault.FridgeFaultId })"
+                               class="btn btn-sm btn-outline-info">
+                                View / Manage
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

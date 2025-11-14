@@ -1,0 +1,66 @@
+﻿@model FridgeSystem.Models.Fridge
+
+@{
+    ViewData["Title"] = "Fridge Details";
+}
+
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">@ViewData["Title"]</h1>
+        <hr />
+    </div>
+</div>
+
+<div>
+    <h4>Fridge: @Model.Model</h4>
+    <dl class="row">
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Model)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Model)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.SerialNumber)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.SerialNumber)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Specification)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Specification)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.FridgeColor)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.FridgeColor)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.FridgeImage)</dt>
+        <dd class="col-sm-9">
+            @if (!string.IsNullOrEmpty(Model.FridgeImage))
+            {
+                <img src="@Model.FridgeImage" alt="Fridge Image" class="img-thumbnail" style="max-width:200px;" />
+            }
+            else
+            {
+                <span>No Image</span>
+            }
+        </dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.StockQuantity)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.StockQuantity)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.IsAvailable)</dt>
+        <dd class="col-sm-9">@(Model.IsAvailable == true ? "Yes" : "No")</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.PurchaseDate)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.PurchaseDate)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.WarrantyExpiryDate)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.WarrantyExpiryDate)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.DeliveryDate)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.DeliveryDate)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Category)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Category)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Supplier)</dt>
+        <dd class="col-sm-9">@(Model.Supplier?.SupplierName ?? "N/A")</dd>
+    </dl>
+</div>
+<div class="mt-4">
+    <a asp-action="Edit" asp-route-id="@Model.FridgeId" class="btn btn-warning"><i class="bi bi-pencil-square"></i> Edit</a>
+    <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Back to List</a>
+</div>

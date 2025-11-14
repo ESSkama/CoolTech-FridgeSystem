@@ -1,0 +1,148 @@
+﻿@model IEnumerable<FridgeSystem.Models.Fridge>
+@using FridgeSystem.Models
+@inject Microsoft.AspNetCore.Identity.SignInManager<FridgeSystem.Models.ApplicationUser> SignInManager
+
+@{
+    ViewData["Title"] = "Home Page";
+    bool isAdmin = (bool)ViewBag.IsAdmin;
+}
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <!-- Sidebar Filters -->
+        <div class="col-md-3">
+            <!-- Product Categories -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Product Categories</h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                    @foreach (var category in Enum.GetValues(typeof(FridgeCategory)).Cast<FridgeCategory>())
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            @(category.ToString().Replace("Door", " Door").Replace("BySide", " By Side").Replace("Cooler", " Cooler"))
+                            <span class="badge bg-primary rounded-pill">@Model.Count(f => f.Category == category)</span>
+                        </li>
+                    }
+                </ul>
+            </div>
+
+            <!-- Filter by Color -->
+           <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Filter by Color</h5>
+                </div>
+                <div class="card-body">
+                    @foreach (var color in Model.Select(f => f.FridgeColor).Distinct().OrderBy(c => c))
+                    {
+                        <div class="form-check">
+                            <input class="form-check-input color-filter" type="checkbox" value="@color" id="color_@color.Replace(" ", "")">
+                            <label class="form-check-label" for="color_@color.Replace(" ", "")">@color</label>
+                        </div>
+                    }
+                    <button class="btn btn-secondary btn-sm mt-3 w-100" id="resetColors">RESET</button>
+                </div>
+            </div>
+        </div> 
+
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <h1 class="text-center mb-3">Beverage Coolers & Fridges</h1>
+            <p class="lead text-muted text-center mb-4">Explore our wide selection of beverage coolers for your business.</p>
+
+            <div class="input-group mb-4">
+                <input type="text" class="form-control" id="searchBox" placeholder="Search for fridges..." aria-label="Search products">
+                <button class="btn btn-outline-secondary" type="button" id="searchButton"><i class="bi bi-search"></i></button>
+            </div>
+
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4" id="fridgeCards">
+                @foreach (var fridge in Model)
+                {
+                    <div class="col fridge-card" data-color="@fridge.FridgeColor" data-model="@fridge.Model">
+                        <div class="card h-100 shadow-sm">
+                            <img src="@(string.IsNullOrEmpty(fridge.FridgeImage) ? "https://via.placeholder.com/200x200?text=No+Image" : fridge.FridgeImage)" 
+                                 class="card-img-top p-3" alt="@fridge.Model" style="height:200px; object-fit:cover;" />
+                            <div class="card-body d-flex flex-column">
+                                <h6 class="card-title">@fridge.Model</h6>
+                                <p class="card-text text-muted small mb-1">Color: @fridge.FridgeColor</p>
+                                <p class="card-text small mb-2">Category: @fridge.Category</p>
+                                <p class="card-text small mb-2">Stock: @fridge.StockQuantity</p>
+
+                               <div class="mt-auto d-flex justify-content-between align-items-center">
+    <a asp-controller="Home" asp-action="Details" asp-route-id="@fridge.FridgeId" class="btn btn-sm btn-outline-info">
+        View
+    </a>
+
+    @if (!isAdmin)
+    {
+        <div class="d-flex gap-2">
+            <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                <input type="hidden" name="fridgeId" value="@fridge.FridgeId" />
+                <button type="submit" class="btn btn-sm btn-success"
+                        @(fridge.IsAvailable.GetValueOrDefault() && fridge.StockQuantity > 0 ? "" : "disabled")>
+                    <i class="bi bi-cart-plus"></i> Add to Cart
+                </button>
+            </form>
+            <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-heart"></i></button>
+        </div>
+    }
+    else
+    {
+        <a asp-area="Admin" asp-controller="Fridge" asp-action="Edit" asp-route-id="@fridge.FridgeId" class="btn btn-sm btn-warning">
+            Edit
+        </a>
+    }
+</div>
+
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Optional Pagination -->
+            <nav aria-label="Page navigation example" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Color filter
+            $('.color-filter').on('change', function () {
+                var selectedColors = $('.color-filter:checked').map(function () { return $(this).val(); }).get();
+                $('.fridge-card').each(function () {
+                    var cardColor = $(this).data('color');
+                    if (selectedColors.length === 0 || selectedColors.includes(cardColor)) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            });
+
+            $('#resetColors').click(function () {
+                $('.color-filter').prop('checked', false).trigger('change');
+            });
+
+            // Search filter
+            $('#searchButton, #searchBox').on('input click', function () {
+                var searchTerm = $('#searchBox').val().toLowerCase();
+                $('.fridge-card').each(function () {
+                    var model = $(this).data('model').toLowerCase();
+                    if (model.includes(searchTerm)) $(this).show();
+                    else $(this).hide();
+                });
+            });
+        });
+    </script>
+}

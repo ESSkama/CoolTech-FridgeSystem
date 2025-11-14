@@ -1,0 +1,179 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using FridgeSystem.Models 
+@using Newtonsoft.Json
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - FridgeSystem</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/FridgeSystem.styles.css" asp-append-version="true" />
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+     @RenderSection("Styles", required: false)
+
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">FridgeSystem</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>
+
+        @if (User.Identity.IsAuthenticated)
+{
+  @if (User.IsInRole("Customer"))
+{
+    <li class="nav-item dropdown">
+        <a class="nav-link text-dark dropdown-toggle" href="#" id="navbarDropdownFridgeRequests" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Fridge Requests
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="navbarDropdownFridgeRequests">
+            <li>
+                <a class="dropdown-item" asp-controller="CustomerRequests" asp-action="Index">View My Requests</a>
+            </li>
+           
+            <li>
+                <a class="dropdown-item" asp-controller="CustomerRequests" asp-action="CustomerLocations">My Branches</a>
+            </li>
+            <li>
+                <a class="dropdown-item" asp-controller="CustomerRequests" asp-action="ApprovedFridges">My Fridges</a>
+            </li>
+            <li>
+                <a class="dropdown-item" asp-controller="Fault" asp-action="MyFaults">My Faults</a>
+            </li>
+        </ul>
+    </li>
+}
+}
+
+<ul class="navbar-nav ms-auto">
+
+    <!-- ✅ Show Cart only if: not logged in OR role == Customer -->
+    @if (!SignInManager.IsSignedIn(User) || User.IsInRole("Customer"))
+    {
+        <li class="nav-item">
+            <a class="nav-link position-relative" asp-controller="Cart" asp-action="Index">
+                <i class="bi bi-cart3" style="font-size: 1.3rem;"></i>
+
+                @* ✅ Show item count if cart exists *@
+                @{
+                    var cartData = Context.Session.GetString("CartSession");
+                    if (!string.IsNullOrEmpty(cartData))
+                    {
+                        var cart = JsonConvert.DeserializeObject<List<FridgeSystem.Models.CartItem>>(cartData);
+                        var itemCount = cart?.Sum(c => c.Quantity) ?? 0;
+
+                        if (itemCount > 0)
+                        {
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                @itemCount
+                            </span>
+                        }
+                    }
+                }
+            </a>
+        </li>
+    }
+</ul></li>
+
+                         @* --- START Admin Management Dropdown --- *@
+    @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin")) // Check if user is logged in AND is an Admin
+    {
+        <li class="nav-item dropdown">
+            <a class="nav-link text-dark dropdown-toggle" href="#" id="navbarDropdownManagement" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Management
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdownManagement">
+                <li>
+                    <a class="dropdown-item" asp-area="Admin" asp-controller="User" asp-action="ManageEmployee">
+                        <i class="bi bi-people-fill"></i> Manage Employees
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-area="Admin" asp-controller="Fridge" asp-action="Index">
+                        <i class="bi bi-cpu-fill"></i> Manage Fridges
+                    </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <a class="dropdown-item" asp-area="Admin" asp-controller="Supplier" asp-action="Index">
+                        <i class="bi bi-truck"></i> Manage Suppliers
+                    </a>
+                </li>
+                <li>
+                      <a class="dropdown-item" asp-area="Admin" asp-controller="User" asp-action="ManageCustomer">
+                <i class="bi bi-person-lines-fill"></i> Manage Customers
+            </a>
+                </li>
+                 <li>
+                    <a class="dropdown-item" asp-area="Admin" asp-controller="Warehouse" asp-action="Index">
+                        <i class="bi bi-cpu-fill"></i> Manage Warehouses
+                    </a>
+                </li>
+
+                                    <li>
+                                        <a class="dropdown-item" asp-area="Admin" asp-controller="Stats" asp-action="Index">
+                                            <i class="bi bi-people-fill"></i> Business Stats
+                                        </a>
+                                    </li>
+                <li>
+                  <a class="dropdown-item" asp-area="Admin" asp-controller="FridgeRequests" asp-action="Index">
+    <i class="bi bi-people-fill"></i> View Fridge Requests
+</a>
+               
+               </li>
+              <li> <a class="dropdown-item" asp-area="Admin" asp-controller="FridgeRequests" asp-action="ManageRequests">
+    <i class="bi bi-list-check"></i> Manage Fridge Requests
+</a></li>
+
+<li>
+    <a class=dropdown-item" asp-area="Admin" asp-controller="User" asp-action="LoggedFaults">
+    <i class="bi bi-list-check"></i>Logged Faults</a>
+</li>
+
+                @* Add more admin management links here if needed *@
+            </ul>
+        </li>
+    }
+    @* --- END Admin Management Dropdown --- *@
+                    </ul>
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2025 - FridgeSystem - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

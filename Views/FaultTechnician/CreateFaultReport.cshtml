@@ -1,0 +1,30 @@
+﻿@model FridgeSystem.Models.FridgeFault
+
+@{
+    ViewData["Title"] = "Create Fault Report";
+}
+
+<h2>Create Fault Report</h2>
+<hr />
+
+<div class="card shadow-sm p-3 mb-4">
+    <h4>Fridge Fault Details</h4>
+    <p><strong>Fridge Serial:</strong> @Model.CustomerFridge?.Fridge?.SerialNumber</p>
+    <p><strong>Customer:</strong> @Model.CustomerFridge?.CustomerLocation?.Customer?.BusinessName</p>
+    <p><strong>Location:</strong> @Model.CustomerFridge?.CustomerLocation?.BranchName</p>
+    <p><strong>Reported Issue:</strong> @Model.FaultDescription</p>
+    <p><strong>Status:</strong> @Model.Status</p>
+</div>
+
+<form asp-action="CreateFaultReport" method="post">
+    <input type="hidden" name="faultId" value="@Model.FridgeFaultId" />
+
+    <div class="mb-3">
+        <label for="ReportDescription" class="form-label"><strong>Fault Report</strong></label>
+        <textarea class="form-control" name="ReportDescription" id="ReportDescription" rows="6" required></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit Fault Report</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+

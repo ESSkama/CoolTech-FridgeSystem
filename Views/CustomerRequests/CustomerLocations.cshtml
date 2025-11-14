@@ -1,0 +1,74 @@
+﻿@model IEnumerable<FridgeSystem.Models.CustomerLocationViewModel>
+
+@{
+    ViewData["Title"] = "My Locations";
+}
+
+<div class="container mt-4">
+    <h2>@ViewBag.CustomerName - Locations (@Model.Count())</h2>
+
+    <div class="mb-3">
+        <form method="get" asp-action="CustomerLocations" class="form-inline">
+            <input type="text" name="searchText" value="@ViewBag.SearchText" class="form-control mr-2" placeholder="Search branches..." />
+            <button type="submit" class="btn btn-primary">Search</button>
+            <a asp-action="CustomerLocations" class="btn btn-secondary ml-2">Clear</a>
+        </form>
+    </div>
+
+    <div class="mb-3">
+        <a asp-action="AddLocation" class="btn btn-success" asp-route-businessId="@ViewBag.BusinessId">Add New Branch</a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">No locations found.</div>
+    }
+    else
+    {
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Branch Name</th>
+                    <th>Address</th>
+                    <th>City</th>
+                    <th>Province</th>
+                    <th>Postcode</th>
+                    <th>Telephone</th>
+                    <th>Contact Person</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var loc in Model)
+                {
+                    <tr>
+                        <td>@loc.BranchName</td>
+                        <td>@loc.AddressLine1 @if(!string.IsNullOrEmpty(loc.AddressLine2)){
+                        <text>, @loc.AddressLine2</text>
+                    }
+    </td>
+                    <td>@loc.City</td>
+                    <td>@loc.Province</td>
+                    <td>@loc.Postcode</td>
+                    <td>@loc.Telephone</td>
+                    <td>@loc.ContactPerson</td>
+                    <td>
+                        @if (loc.IsActive)
+                        {
+                            <span class="badge badge-success">Active</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-danger">Inactive</span>
+                        }
+                    </td>
+                    <td>
+                        <a asp-action="EditLocation" asp-route-id="@loc.LocationId" class="btn btn-sm btn-warning">Edit</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+        }
+</div>

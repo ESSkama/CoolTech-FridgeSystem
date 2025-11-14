@@ -1,0 +1,63 @@
+﻿@model FridgeSystem.Models.FridgeRequest
+
+@{
+    ViewData["Title"] = "Fridge Request Details";
+}
+
+<h2>Fridge Request Details</h2>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <h5 class="card-title">Request #@Model.RequestId</h5>
+        <p><strong>Customer:</strong> @Model.Customer?.UserName</p>
+        <p><strong>Contact Number:</strong> @Model.ContactNumber</p>
+        <p><strong>Warehouse:</strong> @Model.Warehouse?.Name</p>
+        <p><strong>Branch:</strong> @Model.CustomerLocation?.BranchName</p>
+        <p><strong>Preferred Pickup:</strong> @Model.PreferredPickup.ToShortDateString()</p>
+        <p><strong>Special Instructions:</strong> @Model.SpecialInstructions</p>
+        <p><strong>Status:</strong> @Model.Status</p>
+        @if(Model.ApprovedDate != null)
+        {
+            <p><strong>Approved/Declined Date:</strong> @Model.ApprovedDate.ToShortDateString()</p>
+        }
+    </div>
+</div>
+
+<h4>Fridges Requested</h4>
+@if (Model.FridgeRequestItems != null && Model.FridgeRequestItems.Any())
+{
+    <div class="row">
+        @foreach (var item in Model.FridgeRequestItems)
+        {
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    <img src="@(item.Fridge?.FridgeImage ?? "/images/default-fridge.png")" class="card-img-top" alt="@item.Fridge?.Model">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Fridge?.Model</h5>
+                        <p class="card-text"><strong>Category:</strong> @item.Fridge?.Category</p>
+                        <p class="card-text"><strong>Quantity:</strong> @item.Quantity</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p class="text-muted">No fridges were requested.</p>
+}
+
+<div class="mt-3">
+    @if (Model.Status == FridgeSystem.Models.RequestStatus.Pending)
+    {
+        <form asp-action="Approve" method="post" style="display:inline">
+            <input type="hidden" name="id" value="@Model.RequestId" />
+            <button type="submit" class="btn btn-success">Approve</button>
+        </form>
+        <form asp-action="Decline" method="post" style="display:inline">
+            <input type="hidden" name="id" value="@Model.RequestId" />
+            <button type="submit" class="btn btn-danger">Decline</button>
+        </form>
+    }
+    <a asp-action="ManageRequests" class="btn btn-secondary">Back to Requests</a>
+</div>

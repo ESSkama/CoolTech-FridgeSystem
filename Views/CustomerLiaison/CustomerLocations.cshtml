@@ -1,0 +1,68 @@
+﻿@model IEnumerable<FridgeSystem.Models.CustomerLocationViewModel>
+
+@{
+    ViewData["Title"] = "Customer Locations";
+    var businessId = ViewBag.BusinessId as int? ?? 0;
+    var customerName = ViewBag.CustomerName as string ?? "Customer";
+}
+
+<h1 class="dashboard-title">@customerName - Branches</h1>
+
+<div class="form-container" style="width: 100%; margin:auto;">
+    <div style="margin-bottom: 20px; display:flex; gap:10px;">
+        <a asp-action="AddLocation" asp-route-businessId="@businessId" class="form-button add-button">Add Location</a>
+        <a asp-action="Customers" class="form-button btn-secondary">Back to Customers</a>
+    </div>
+
+    <table class="employees-table">
+        <thead>
+            <tr>
+                <th>Branch Name</th>
+                <th>Branch Address</th>
+                <th>City</th>
+                <th>Province</th>
+                <th>Postal Code</th>
+                <th>Telephone</th>
+                <th>Contact Person</th>
+                <th>Active</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var l in Model)
+                {
+                    <tr style="@(l.IsActive ? "" : "background-color: rgba(255, 0, 0, 0.05); font-style: italic;")">
+                        <td>@l.BranchName</td>
+                        <td>@l.AddressLine1 @l.AddressLine2</td>
+                        <td>@l.City</td>
+                        <td>@l.Province</td>
+                        <td>@l.Postcode</td>
+                        <td>@l.Telephone</td>
+                        <td>@l.ContactPerson</td>
+                        <td>@(l.IsActive ? "Yes" : "No")</td>
+                        <td class="actions-cell">
+                            <a asp-action="EditLocation" asp-route-id="@l.LocationId" class="btn-action edit-btn">Edit</a>
+                            <form asp-action="DeleteLocation" method="post" style="display:inline;">
+                                <input type="hidden" name="id" value="@l.LocationId" />
+                                <input type="hidden" name="businessId" value="@l.BusinessId" />
+                                <button type="submit" class="btn-action delete-btn"
+                                        onclick="return confirm('Are you sure you want to delete this branch?');">
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="9" style="text-align:center;">No locations found.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+

@@ -1,0 +1,62 @@
+﻿@model FridgeSystem.Models.Warehouse
+
+@{
+    ViewData["Title"] = "Edit Warehouse";
+}
+
+<h2>Edit Warehouse</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="WarehouseId" />
+
+    <div class="form-group mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label asp-for="AddressLine1" class="form-label"></label>
+            <input asp-for="AddressLine1" class="form-control" />
+        </div>
+        <div class="col-md-6 mb-3">
+            <label asp-for="AddressLine2" class="form-label"></label>
+            <input asp-for="AddressLine2" class="form-control" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <label asp-for="City" class="form-label"></label>
+            <input asp-for="City" class="form-control" />
+        </div>
+        <div class="col-md-4 mb-3">
+            <label asp-for="Province" class="form-label"></label>
+            <input asp-for="Province" class="form-control" />
+        </div>
+        <div class="col-md-4 mb-3">
+            <label asp-for="PostalCode" class="form-label"></label>
+            <input asp-for="PostalCode" class="form-control" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label asp-for="PhoneNumber" class="form-label"></label>
+            <input asp-for="PhoneNumber" class="form-control" />
+        </div>
+        <div class="col-md-6 mb-3">
+            <label asp-for="Email" class="form-label"></label>
+            <input asp-for="Email" class="form-control" />
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-warning">Save Changes</button>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

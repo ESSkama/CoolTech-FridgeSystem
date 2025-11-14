@@ -1,0 +1,80 @@
+﻿@model FridgeSystem.Models.Supplier
+
+@{
+    ViewData["Title"] = "Supplier Details";
+}
+
+<h1>Supplier Details</h1>
+
+<div>
+    <h4>Supplier</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.SupplierName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.SupplierName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ContactPerson)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ContactPerson)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Telephone)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Telephone)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Address)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Address)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.IsActive)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.IsActive)
+        </dd>
+    </dl>
+
+    @if (Model.SuppliedFridges != null && Model.SuppliedFridges.Any())
+    {
+        <h3>Fridges Supplied by @Model.SupplierName</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Model</th>
+                    <th>Serial Number</th>
+                    <th>Stock Quantity</th>
+                    <th>Is Available</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var fridge in Model.SuppliedFridges)
+                {
+                    <tr>
+                        <td>@fridge.Model</td>
+                        <td>@fridge.SerialNumber</td>
+                        <td>@fridge.StockQuantity</td>
+                        <td>@(fridge.IsAvailable.GetValueOrDefault() ? "Yes" : "No")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.SupplierId" class="btn btn-primary">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

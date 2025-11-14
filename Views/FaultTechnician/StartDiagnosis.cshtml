@@ -1,0 +1,55 @@
+﻿@model FridgeSystem.Models.FridgeFault
+
+@{
+    ViewData["Title"] = "Start Diagnosis";
+}
+
+<h2>Start Diagnosis</h2>
+<hr />
+
+<div class="card shadow-sm p-3 mb-4">
+    <h4>Fridge Fault Details</h4>
+    <p><strong>Fridge Serial:</strong> @Model.CustomerFridge?.Fridge?.SerialNumber</p>
+    <p><strong>Customer:</strong> @Model.CustomerFridge?.CustomerLocation?.Customer?.BusinessName</p>
+    <p><strong>Location:</strong> @Model.CustomerFridge?.CustomerLocation?.BranchName</p>
+    <p><strong>Contact Person:</strong> @Model.CustomerFridge?.CustomerLocation?.ContactPerson</p>
+    <p><strong>Reported Issue:</strong> @Model.FaultDescription</p>
+    <p><strong>Status:</strong> @Model.Status</p>
+</div>
+
+@*<div class="card shadow-sm p-3 mb-4">
+    <h4>Assigned Technicians</h4>
+    @if (Model.AssignedFaults != null && Model.AssignedFaults.Any())
+    {
+        <ul>
+            @foreach (var af in Model.AssignedFaults)
+            {
+                <li>Assigned To: @(af.Technician != null ? af.Technician.FirstName + " " + af.Technician.LastName : "N/A")</li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>No technicians assigned yet.</p>
+    }
+</div>*@ 
+
+<hr />
+
+<h4>Schedule Repair Date</h4>
+
+<form asp-action="CreateServiceSchedule" method="post">
+    <input type="hidden" name="FridgeFaultId" value="@Model.FridgeFaultId" />
+
+    <div class="mb-3">
+        <label for="ScheduledDate" class="form-label">Repair Date</label>
+        <input type="date" class="form-control" name="ScheduledDate" id="ScheduledDate" value="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+    </div>
+    <div class="mb-3">
+    <label for="ScheduledTime">Repair Time</label>
+    <input type="time" name="ScheduledTime" class="form-control" required />
+</div>
+
+    <button type="submit" class="btn btn-success">Set Schedule</button>
+    <a asp-action="Index" class="btn btn-secondary mt-3">Back to Dashboard</a>
+</form>

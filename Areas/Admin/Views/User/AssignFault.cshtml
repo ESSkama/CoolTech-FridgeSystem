@@ -1,0 +1,50 @@
+﻿@model AssignFaultViewModel
+
+<h2>
+    @(Model.CurrentTechnicianId != 0 ? "Reassign Technician" : "Assign Technician")
+</h2>
+
+<form asp-action="AssignFault" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="FaultId" />
+
+    <div class="mb-3">
+        <label>Warehouse</label>
+        <select asp-for="SelectedWarehouseId" asp-items="Model.Warehouses" class="form-control" onchange="this.form.submit()">
+            <option value="">-- Select Warehouse --</option>
+        </select>
+    </div>
+
+    @if (Model.Technicians != null && Model.Technicians.Any())
+    {
+        <table class="table mt-3">
+            <thead>
+                <tr>
+                    <th>Technician</th>
+                    <th>Current Assignments</th>
+                    <th>Select</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var tech in Model.Technicians)
+                {
+                    <tr>
+                        <td>@tech.TechnicianName</td>
+                        <td>@tech.AssignedFaultCount</td>
+                        <td><input type="radio" 
+       asp-for="SelectedTechnicianId" 
+       value="@tech.TechnicianId" 
+       checked="@(tech.TechnicianId == Model.CurrentTechnicianId)" 
+       required />
+
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <button type="submit" class="btn btn-success mt-2">
+            @(Model.CurrentTechnicianId != 0 ? "Reassign Technician" : "Assign Technician")
+        </button>
+    }
+</form>

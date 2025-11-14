@@ -1,0 +1,31 @@
+﻿@model FridgeSystem.Models.FaultReportViewModel
+
+<h2>Log a Fault</h2>
+<hr />
+
+<form asp-action="Create" asp-controller="Fault" method="post">
+    @Html.AntiForgeryToken()
+     <div asp-validation-summary="All" class="text-danger"></div>
+
+    <input type="hidden" asp-for="FridgeId" />
+
+    <div class="mb-3">
+        <label asp-for="SelectedCategory" class="form-label">Title</label>
+        <select asp-for="SelectedCategory" asp-items="Model.CategoryOptions" class="form-select">
+            <option value="">-- Select Category --</option>
+        </select>
+        <span asp-validation-for="SelectedCategory" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label">Description</label>
+        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit Fault</button>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

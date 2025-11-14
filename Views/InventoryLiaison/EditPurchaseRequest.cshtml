@@ -1,0 +1,53 @@
+﻿@using FridgeSystem.Models 
+@model FridgeSystem.Models.ViewModels.PurchaseRequestViewModel
+
+@{
+    ViewData["Title"] = "Edit Purchase Request";
+}
+
+<h2 class="mb-4">Edit Purchase Request</h2>
+
+<form asp-action="EditPurchaseRequest" method="post" class="card p-4 shadow-sm">
+
+    <input type="hidden" asp-for="PurchaseRequestId" />
+
+    <div class="mb-3">
+        <label asp-for="InventoryId" class="form-label">Fridge Model</label>
+        <select asp-for="InventoryId" asp-items="Model.FridgeModels" class="form-select" disabled>
+        </select>
+        <span asp-validation-for="InventoryId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Quantity" class="form-label">Quantity</label>
+        <input asp-for="Quantity" class="form-control" type="number" min="1" />
+        <span asp-validation-for="Quantity" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ReasonForRequest" class="form-label">Reason for Request</label>
+        <textarea asp-for="ReasonForRequest" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="ReasonForRequest" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Status" class="form-label">Status</label>
+        <select asp-for="Status" class="form-select">
+            <option value="">-- Select Status --</option>
+            @foreach (RequestStatus status in Enum.GetValues(typeof(RequestStatus)))
+            {
+                <option value="@status" selected="@(status == Model.Status ? "selected" : null)">
+                    @status
+                </option>
+            }
+        </select>
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <a asp-action="PurchaseRequests" class="btn btn-secondary ms-2">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

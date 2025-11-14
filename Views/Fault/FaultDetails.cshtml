@@ -1,0 +1,67 @@
+﻿@model FridgeSystem.Models.FridgeFault
+
+@{
+    ViewData["Title"] = "Fault Details";
+}
+
+<h2>Fault Details</h2>
+<hr />
+
+<div class="card shadow-sm p-3 mb-4">
+    <div class="row">
+        <!-- Fridge Image -->
+        <div class="col-md-4 text-center">
+            @if (Model.CustomerFridge?.Fridge?.FridgeImage != null)
+            {
+                <img src="@Model.CustomerFridge.Fridge.FridgeImage" alt="Fridge Image" class="img-fluid rounded" />
+            }
+            else
+            {
+                <img src="~/images/no-image.png" alt="No Image" class="img-fluid rounded" />
+            }
+        </div>
+
+        <div class="col-md-8">
+            <!-- Fault Info -->
+            <h4>@Model.Title</h4>
+            <p><strong>Category:</strong> @Model.SelectedCategory</p>
+            <p><strong>Description:</strong> @Model.FaultDescription</p>
+            <p><strong>Status:</strong> @Model.Status</p>
+            <p><strong>Date Logged:</strong> @Model.LoggedDate.ToString("dd MMM yyyy HH:mm")</p>
+
+            <!-- Fridge Details -->
+            @if (Model.CustomerFridge?.Fridge != null)
+            {
+                <h5 class="mt-3">Fridge Details</h5>
+                <p><strong>Model:</strong> @Model.CustomerFridge.Fridge.Model</p>
+                <p><strong>Serial No:</strong> @Model.CustomerFridge.Fridge.SerialNumber</p>
+                <p><strong>Color:</strong> @Model.CustomerFridge.Fridge.FridgeColor</p>
+            }
+
+            <!-- Customer / Branch Info -->
+            @if (Model.CustomerFridge?.CustomerLocation?.Customer != null)
+            {
+                <h5 class="mt-3">Customer Info</h5>
+                <p><strong>Business:</strong> @Model.CustomerFridge.CustomerLocation.Customer.BusinessName</p>
+                <p><strong>Branch:</strong> @Model.CustomerFridge.CustomerLocation.BranchName</p>
+                <p><strong>Address:</strong> @Model.CustomerFridge.CustomerLocation.AddressLine1
+                    @if(!string.IsNullOrEmpty(Model.CustomerFridge.CustomerLocation.AddressLine2))
+                    {
+                        @(", " + Model.CustomerFridge.CustomerLocation.AddressLine2)
+                    }
+                </p>
+                <p><strong>City:</strong> @Model.CustomerFridge.CustomerLocation.City</p>
+            }
+
+            <!-- Assigned Technician (if any) -->
+            @if (Model.AssignedFaults != null && Model.AssignedFaults.Any())
+            {
+                var tech = Model.AssignedFaults.FirstOrDefault()?.Technician;
+                <h5 class="mt-3">Assigned Technician</h5>
+                <p>@(tech != null ? $"{tech.FirstName} {tech.LastName}" : "Not Assigned")</p>
+            }
+
+            <a asp-action="MyFaults" asp-controller="Fault" class="btn btn-secondary mt-3">Back to My Faults</a>
+        </div>
+    </div>
+</div>

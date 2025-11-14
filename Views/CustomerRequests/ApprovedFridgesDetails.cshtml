@@ -1,0 +1,47 @@
+﻿@model FridgeSystem.Models.FridgeRequest
+
+<h2>Fridge Request Details</h2>
+
+<div class="mb-3">
+    <strong>Request ID:</strong> @Model.RequestId
+</div>
+<div class="mb-3">
+    <strong>Customer:</strong> @Model.Customer?.BusinessName
+</div>
+<div class="mb-3">
+    <strong>Contact Number:</strong> @Model.ContactNumber
+</div>
+<div class="mb-3">
+    <strong>Warehouse for Pickup:</strong> @Model.Warehouse?.Name
+</div>
+<div class="mb-3">
+    <strong>Branch:</strong> @Model.CustomerLocation?.BranchName
+</div>
+<div class="mb-3">
+    <strong>Preferred Pickup:</strong> @Model.PreferredPickup.ToShortDateString()
+</div>
+<div class="mb-3">
+    <strong>Special Instructions:</strong> @Model.SpecialInstructions
+</div>
+
+<h4>Fridges</h4>
+@foreach (var item in Model.FridgeRequestItems)
+{
+    <div class="card mb-3">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src="@(item.Fridge?.FridgeImage ?? "/images/default-fridge.png")" class="img-fluid rounded-start" alt="@item.Fridge?.Model" />
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">@item.Fridge?.Model</h5>
+                    <p>Quantity: @item.Quantity</p>
+                    <p>Category: @item.Fridge?.Category</p>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<a asp-action="ApprovedFridges" class="btn btn-secondary">Back to My Fridges</a>
+

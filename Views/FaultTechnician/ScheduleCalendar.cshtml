@@ -1,0 +1,116 @@
+﻿@{
+    ViewData["Title"] = "Schedule Calendar";
+    Layout = "_Layout"; // your layout page
+}
+
+<h2>Technician Schedule Calendar</h2>
+<hr />
+
+<div id="calendar"></div>
+
+@section Styles {
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.5/main.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.5/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendar');
+
+            // Get schedules from ViewData
+            var schedules = @Html.Raw(ViewData["Schedules"] ?? "[]");
+
+            // Add colors based on status
+            schedules.forEach(function(s) {
+                if (s.status === 'Scheduled') s.color = '#0d6efd';
+                else if (s.status === 'InProgress') s.color = '#ffc107';
+                else if (s.status === 'Completed') s.color = '#198754';
+                else s.color = '#6c757d';
+
+                // Add tooltip content
+                s.extendedProps = {
+                    tooltip: `${s.title}\nCustomer: ${s.customer}\nBranch: ${s.address}`
+                };
+            });
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+                },
+                events: schedules,
+                eventTimeFormat: {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false
+                },
+                eventDidMount: function(info) {
+                    // Initialize Bootstrap tooltip for each event
+                    var tooltip = new bootstrap.Tooltip(info.el, {
+                        title: info.event.extendedProps.tooltip,
+                        placement: 'top',
+                        trigger: 'hover',
+                        container: 'body'
+                    });
+                },
+                eventClick: function(info) {
+                    var schedule = info.event.extendedProps;
+
+                    if (info.event.extendedProps.status === 'Completed') {
+                        alert("This repair is already completed.");
+                        return;
+                    }
+
+                    // Populate modal fields
+                    var modal = new bootstrap.Modal(document.getElementById('finishModal'));
+                    document.getElementById('ScheduleId').value = info.event.id;
+                    document.getElementById('FinishDate').value = new Date().toISOString().split('T')[0];
+                    document.getElementById('FinishTime').value = new Date().toTimeString().split(' ')[0].substring(0,5);
+                    document.getElementById('ModalTitle').innerText = info.event.title + " - " + schedule.customer;
+
+                    modal.show();
+                }
+            });
+
+            calendar.render();
+        });
+    </script>
+}
+
+<!-- Modal -->
+<div class="modal fade" id="finishModal" tabindex="-1" aria-labelledby="ModalTitle" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="CompleteRepair" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ModalTitle">Complete Repair</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="ScheduleId" id="ScheduleId" />
+
+                    <div class="mb-3">
+                        <label for="FinishDate" class="form-label">Finish Date</label>
+                        <input type="date" name="FinishDate" id="FinishDate" class="form-control" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="FinishTime" class="form-label">Finish Time</label>
+                        <input type="time" name="FinishTime" id="FinishTime" class="form-control" required />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Create Report</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

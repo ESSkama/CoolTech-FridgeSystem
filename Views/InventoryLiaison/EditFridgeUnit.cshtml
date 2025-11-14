@@ -1,0 +1,110 @@
+﻿@model FridgeSystem.Models.FridgeCreateEditViewModel
+
+@{
+    ViewData["Title"] = "Edit Fridge Unit";
+}
+
+<h2>Edit Fridge Unit</h2>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
+<form asp-action="EditFridgeUnit" method="post" enctype="multipart/form-data" class="d-flex flex-column gap-3">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="FridgeId" />
+
+    <div class="form-group">
+        <label asp-for="Model"></label>
+        <input asp-for="Model" class="form-control" />
+        <span asp-validation-for="Model" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="SerialNumber"></label>
+        <input asp-for="SerialNumber" class="form-control" />
+        <span asp-validation-for="SerialNumber" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Specification"></label>
+        <textarea asp-for="Specification" class="form-control"></textarea>
+        <span asp-validation-for="Specification" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="FridgeColor"></label>
+        <input asp-for="FridgeColor" class="form-control" />
+        <span asp-validation-for="FridgeColor" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label>Current Image</label>
+        @if (!string.IsNullOrEmpty(Model.FridgeImage))
+        {
+            <img src="@Model.FridgeImage" alt="Fridge Image" class="img-thumbnail mb-2" style="max-height:150px;" />
+        }
+        <label asp-for="FridgeImageFile">Upload New Image</label>
+        <input asp-for="FridgeImageFile" type="file" class="form-control" />
+        <span asp-validation-for="FridgeImageFile" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="StockQuantity"></label>
+        <input asp-for="StockQuantity" type="number" class="form-control" />
+        <span asp-validation-for="StockQuantity" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="IsAvailable"></label>
+        <input asp-for="IsAvailable" type="checkbox" class="form-check-input" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="PurchaseDate"></label>
+        <input asp-for="PurchaseDate" type="date" class="form-control" />
+        <span asp-validation-for="PurchaseDate" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="WarrantyExpiryDate"></label>
+        <input asp-for="WarrantyExpiryDate" type="date" class="form-control" />
+        <span asp-validation-for="WarrantyExpiryDate" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="DeliveryDate"></label>
+        <input asp-for="DeliveryDate" type="date" class="form-control" />
+        <span asp-validation-for="DeliveryDate" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Category"></label>
+        <select asp-for="Category" class="form-control" asp-items="Html.GetEnumSelectList<FridgeSystem.Models.FridgeCategory>()"></select>
+        <span asp-validation-for="Category" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="SelectedSupplierId"></label>
+        <select asp-for="SelectedSupplierId" class="form-control" asp-items="Model.Suppliers"></select>
+        <span asp-validation-for="SelectedSupplierId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label>Warehouse</label>
+        <select asp-for="WarehouseId" class="form-control" asp-items="ViewBag.Warehouses"></select>
+        <span asp-validation-for="WarehouseId" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <a asp-action="FridgeUnit" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

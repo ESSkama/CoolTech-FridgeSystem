@@ -1,0 +1,67 @@
+﻿@model IEnumerable<FridgeSystem.Models.FridgeFault>
+
+@{
+    ViewData["Title"] = "Logged Faults";
+}
+
+<h2 class="mt-4">Logged Faults</h2>
+<hr />
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        No faults have been logged yet.
+    </div>
+}
+else
+{
+    <table class="table table-striped table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th>Fault Title</th>
+                <th>Date Logged</th>
+                <th>Customer</th>
+                <th>Branch</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var fault in Model)
+        {
+            <tr>
+                <td>@fault.Title</td>
+                <td>@fault.LoggedDate.ToString("yyyy-MM-dd HH:mm")</td>
+                <td>@fault.CustomerFridge?.CustomerLocation?.Customer?.BusinessName</td>
+                <td>@fault.CustomerFridge?.CustomerLocation?.BranchName</td>
+                <td>
+                    @if(fault.Status == FridgeSystem.Models.FaultStatus.Assigned)
+                    {
+                        <span class="badge bg-success">Assigned</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-warning">Logged</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="FaultDetails"
+                       asp-controller="User"
+                       asp-route-id="@fault.FridgeFaultId"
+                       class="btn btn-sm btn-primary">
+                        Details
+                    </a>
+
+                   <a asp-action="AssignFault"
+   asp-controller="User" 
+   asp-route-faultId="@fault.FridgeFaultId"
+   class="btn btn-sm @(fault.Status == FridgeSystem.Models.FaultStatus.Assigned ? "btn-warning" : "btn-success")">
+    @(fault.Status == FridgeSystem.Models.FaultStatus.Assigned ? "Reassign" : "Assign")
+</a>
+
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

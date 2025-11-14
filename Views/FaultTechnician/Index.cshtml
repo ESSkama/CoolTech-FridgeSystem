@@ -1,0 +1,109 @@
+﻿@model FridgeSystem.Models.ViewModels.TechnicianDashboardViewModel
+
+@{
+    ViewData["Title"] = "Technician Dashboard";
+}
+
+<div class="container mt-4">
+
+    <!-- Greeting Section -->
+    <div class="mb-4">
+        <h2 class="fw-bold">👋 Welcome back, @Model.TechnicianName!</h2>
+        <p class="text-muted">Here’s what’s happening with your assigned faults.</p>
+    </div>
+
+    <!-- Notification Bar -->
+    @if (Model.NewlyAssigned != null && Model.NewlyAssigned.Count > 0)
+    {
+        <div class="alert alert-info d-flex align-items-center justify-content-between" role="alert">
+            <div>
+                <i class="bi bi-bell-fill me-2"></i>
+                You have <strong>@Model.NewlyAssigned.Count</strong> newly assigned fault(s) waiting for attention.
+            </div>
+            <a href="@Url.Action("NewlyAssigned", "FaultTechnician")" class="btn btn-sm btn-outline-primary">
+                View New Faults
+            </a>
+        </div>
+    }
+
+    <!-- Dashboard Cards Grid -->
+    <div class="row g-4">
+
+        <!-- Newly Assigned Faults -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-danger shadow-sm h-100">
+                <div class="card-header bg-danger text-white fw-bold">Newly Assigned</div>
+                <div class="card-body">
+                    <h4>@Model.NewlyAssigned?.Count</h4>
+                    <p class="text-muted small">Faults assigned but not yet viewed.</p>
+                    <a href="@Url.Action("NewlyAssigned", "FaultTechnician")" class="btn btn-outline-danger btn-sm w-100">View Details</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Diagnosis -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-warning shadow-sm h-100">
+                <div class="card-header bg-warning text-white fw-bold">Pending Diagnosis</div>
+                <div class="card-body">
+                    <h4>@Model.PendingDiagnosis?.Count</h4>
+                    <p class="text-muted small">Viewed but not yet diagnosed.</p>
+                    <a href="@Url.Action("StartDiagnosis", "FaultTechnician")" class="btn btn-outline-warning btn-sm w-100">View Details</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scheduled Repairs -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-info shadow-sm h-100">
+                <div class="card-header bg-info text-white fw-bold">Scheduled Repairs</div>
+                <div class="card-body">
+                    <h4>@Model.ScheduledRepairs?.Count</h4>
+                    <p class="text-muted small">Repairs scheduled and upcoming.</p>
+
+                    @if (Model.ScheduledRepairs != null && Model.ScheduledRepairs.Any())
+                    {
+                        <a href="@Url.Action("ScheduledRepairs", "FaultTechnician")" class="btn btn-outline-info btn-sm w-100">
+                            View Details
+                        </a>
+                    }
+                    else
+                    {
+                        <p class="text-muted small">No scheduled repairs.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Completed Faults -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-success shadow-sm h-100">
+                <div class="card-header bg-success text-white fw-bold">Completed Faults</div>
+                <div class="card-body">
+                    <h4>@Model.CompletedFaults?.Count</h4>
+                    <p class="text-muted small">All faults diagnosed and repaired.</p>
+                    <a href="@Url.Action("CompletedFaults", "FaultTechnician")" class="btn btn-outline-success btn-sm w-100">
+                        View Reports
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Quick Actions Section -->
+    <div class="mt-5">
+        <h5 class="fw-bold mb-3">Quick Actions</h5>
+        <div class="d-flex flex-wrap gap-2">
+            <a href="@Url.Action("ScheduleCalendar", "FaultTechnician")" class="btn btn-outline-secondary">
+                <i class="bi bi-search"></i> Search Faults
+            </a>
+            <a href="@Url.Action("Search", "FaultTechnician")" class="btn btn-outline-secondary">
+                <i class="bi bi-search"></i> Search Faults
+            </a>
+            <a href="@Url.Action("Profile", "FaultTechnician")" class="btn btn-outline-secondary">
+                <i class="bi bi-person-circle"></i> Profile Settings
+            </a>
+        </div>
+    </div>
+

@@ -1,0 +1,95 @@
+﻿@model CustomerViewModel
+
+@{
+    ViewData["Title"] = "Create New Customer";
+}
+
+<h1>@ViewData["Title"]</h1>
+<hr />
+
+<div class="row">
+    <div class="col-md-8">
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <form asp-action="CreateCustomer" method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="mb-3">
+                <label asp-for="BusinessName" class="form-label"></label>
+                <input asp-for="BusinessName" class="form-control" />
+                <span asp-validation-for="BusinessName" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Telephone" class="form-label"></label>
+                <input asp-for="Telephone" class="form-control" />
+                <span asp-validation-for="Telephone" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="BillingAddress" class="form-label"></label>
+                <textarea asp-for="BillingAddress" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="BillingAddress" class="text-danger"></span>
+            </div>
+          {{-- START OF FIX --}}
+            <div class="mb-3">
+                <label asp-for="BusinessTypeId" class="form-label"></label>
+                <select asp-for="BusinessTypeId" asp-items="Model.BusinessTypeList" class="form-control">
+                    <option value="">-- Select Business Type --</option>
+                </select>
+                <span asp-validation-for="BusinessTypeId" class="text-danger"></span>
+            </div>
+            {{-- END OF FIX --}}
+            <div class="mb-3">
+                <label asp-for="ContactPersonName" class="form-label"></label>
+                <input asp-for="ContactPersonName" class="form-control" />
+                <span asp-validation-for="ContactPersonName" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3 form-check">
+                <input class="form-check-input" asp-for="ProfileActive" />
+                <label class="form-check-label" asp-for="ProfileActive"></label>
+            </div>
+
+            <h4 class="mt-4">Login Credentials (Optional)</h4>
+            <p class="text-muted">If no password is provided, a temporary one will be generated.</p>
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label">Password</label>
+                <input asp-for="Password" class="form-control" autocomplete="new-password" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="ConfirmPassword" class="form-label"></label>
+                <input asp-for="ConfirmPassword" class="form-control" autocomplete="new-password" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary">Create Customer</button>
+                <a asp-action="ManageCustomer" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

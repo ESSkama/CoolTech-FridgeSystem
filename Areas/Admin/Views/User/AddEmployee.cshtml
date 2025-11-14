@@ -1,0 +1,136 @@
+@model FridgeSystem.Models.EmployeeViewModel
+
+@{
+    ViewData["Title"] = "Add Employee";
+}
+
+<h1 class="dashboard-title">@ViewData["Title"]</h1>
+
+<div class="toolbar-row mb-3">
+    <a asp-action="ManageEmployee" class="btn btn-secondary">&larr; Back to Employees</a>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<div class="card shadow-sm p-4">
+    <form asp-action="AddEmployee" method="post">
+        @Html.AntiForgeryToken()
+
+        <!-- First Name -->
+        <div class="mb-3">
+            <label asp-for="FirstName" class="form-label"></label>
+            <input asp-for="FirstName" class="form-control" />
+            <span asp-validation-for="FirstName" class="text-danger"></span>
+        </div>
+
+        <!-- Last Name -->
+        <div class="mb-3">
+            <label asp-for="LastName" class="form-label"></label>
+            <input asp-for="LastName" class="form-control" />
+            <span asp-validation-for="LastName" class="text-danger"></span>
+        </div>
+
+        <!-- Email -->
+        <div class="mb-3">
+            <label asp-for="Email" class="form-label"></label>
+            <input asp-for="Email" type="email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <!-- Phone Number -->
+        <div class="mb-3">
+            <label asp-for="PhoneNumber" class="form-label"></label>
+            <input asp-for="PhoneNumber" class="form-control" />
+            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+        </div>
+
+        <!-- Province -->
+        <div class="mb-3">
+            <label asp-for="Province" class="form-label"></label>
+            <select asp-for="Province" asp-items="Model.Provinces" class="form-select" id="provinceSelect">
+                <option value="">-- Select Province --</option>
+            </select>
+            <span asp-validation-for="Province" class="text-danger"></span>
+        </div>
+
+        <!-- City -->
+        <div class="mb-3">
+            <label asp-for="City" class="form-label"></label>
+            <select asp-for="City" asp-items="Model.Cities" class="form-select" id="citySelect">
+                <option value="">-- Select City --</option>
+            </select>
+            <span asp-validation-for="City" class="text-danger"></span>
+        </div>
+
+        <!-- Warehouse -->
+        <div class="mb-3">
+            <label asp-for="WarehouseId" class="form-label"></label>
+            <select asp-for="WarehouseId" asp-items="Model.Warehouses" class="form-select" id="warehouseSelect">
+                <option value="">-- Select Warehouse --</option>
+            </select>
+            <span asp-validation-for="WarehouseId" class="text-danger"></span>
+        </div>
+
+        <!-- Password -->
+        <div class="mb-3">
+            <label asp-for="Password" class="form-label"></label>
+            <input asp-for="Password" type="password" class="form-control" />
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="ConfirmPassword" class="form-label"></label>
+            <input asp-for="ConfirmPassword" type="password" class="form-control" />
+            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+        </div>
+
+        <!-- Role -->
+        <div class="mb-3">
+            <label asp-for="SelectedRole" class="form-label"></label>
+            <select asp-for="SelectedRole" asp-items="Model.Roles" class="form-select">
+                <option value="">-- Select Role --</option>
+            </select>
+            <span asp-validation-for="SelectedRole" class="text-danger"></span>
+        </div>
+
+        <!-- Active -->
+        <div class="form-check mb-3">
+            <input asp-for="IsActive" class="form-check-input" />
+            <label asp-for="IsActive" class="form-check-label"></label>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a asp-action="ManageEmployee" class="btn btn-secondary ms-2">Cancel</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        const provinceCities = @Html.Raw(Json.Serialize(ViewBag.ProvinceCities));
+
+        const provinceSelect = document.getElementById("provinceSelect");
+        const citySelect = document.getElementById("citySelect");
+
+        provinceSelect.addEventListener("change", function() {
+            const selectedProvince = this.value;
+            const cities = provinceCities[selectedProvince] || [];
+            citySelect.innerHTML = '<option value="">-- Select City --</option>';
+            cities.forEach(c => {
+                const option = document.createElement("option");
+                option.value = c;
+                option.text = c;
+                citySelect.appendChild(option);
+            });
+        });
+    </script>
+}
+

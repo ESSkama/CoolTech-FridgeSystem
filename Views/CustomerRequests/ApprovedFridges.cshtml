@@ -1,0 +1,42 @@
+﻿@model IEnumerable<FridgeSystem.Models.CustomerFridge>
+
+<h2>My Approved Fridges</h2>
+
+@if (!Model.Any())
+{
+    <p>You don’t own any fridges yet.</p>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Fridge Model</th>
+                <th>Category</th>
+                <th>Branch</th>
+                <th>Date Assigned</th>
+                <th>Image</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var cf in Model)
+            {
+                <tr>
+                    <td>@cf.Fridge?.Model</td>
+                    <td>@cf.Fridge?.Category</td>
+                    <td>@cf.CustomerLocation?.BranchName</td>
+                    <td>@cf.DatePickedUp.ToString("yyyy-MM-dd")</td>
+                    <td>
+                        <img src="@(cf.Fridge?.FridgeImage ?? "/images/default-fridge.png")" width="100" />
+                    </td>
+                    <td>
+                        <a asp-controller="Fault" asp-action="Create" asp-route-fridgeId="@cf.CustomerFridgeId" class="btn btn-danger btn-sm">
+                            Log Fault
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

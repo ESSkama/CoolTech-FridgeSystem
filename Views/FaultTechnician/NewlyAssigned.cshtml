@@ -1,0 +1,39 @@
+﻿@model IEnumerable<FridgeSystem.Models.FridgeFault>
+
+<h2>Newly Assigned Faults</h2>
+<hr />
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">No newly assigned faults.</div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Customer</th>
+                <th>Branch</th>
+                <th>Date Assigned</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+      @foreach (var fault in Model)
+{
+    var assignment = fault.AssignedFaults?.FirstOrDefault(); // note the ? safe navigation
+    <tr>
+        <td>@fault.Title</td>
+        <td>@fault.CustomerFridge?.Customer?.BusinessName</td>
+        <td>@fault.CustomerFridge?.CustomerLocation?.BranchName</td>
+        <td>@(assignment != null ? assignment.AssignmentDate.ToString("yyyy-MM-dd HH:mm") : "-")</td>
+        <td>
+            <a asp-action="FaultDetails" asp-controller="FaultTechnician" asp-route-id="@fault.FridgeFaultId" class="btn btn-sm btn-primary">View</a>
+        </td>
+    </tr>
+}
+
+        </tbody>
+    </table>
+}

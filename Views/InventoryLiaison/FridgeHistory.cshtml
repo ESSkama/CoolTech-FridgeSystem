@@ -1,0 +1,124 @@
+﻿@model FridgeSystem.Models.ViewModels.FridgeHistoryViewModel
+
+<div class="form-container">
+    <h1>Fridge History - @Model.Model (@Model.SerialNumber)</h1>
+
+    <!-- Fridge Details -->
+    <div class="fridge-details mb-4">
+        <p><strong>Name:</strong> @Model.FridgeName</p>
+        <p><strong>Model:</strong> @Model.Model</p>
+        <p><strong>Serial Number:</strong> @Model.SerialNumber</p>
+        <p><strong>Category:</strong> @Model.Category</p>
+        <p><strong>Color:</strong> @Model.FridgeColor</p>
+        <p><strong>Warehouse:</strong> @Model.WarehouseName</p>
+        <p><strong>Status:</strong> @Model.Status</p>
+    </div>
+
+    <!-- Status History -->
+    <h2>Status History</h2>
+    @if (Model.StatusHistory != null && Model.StatusHistory.Any())
+    {
+        <table class="table table-bordered table-striped">
+            <thead class="table-light">
+                <tr>
+                    <th>Date</th>
+                    <th>Note</th>
+                    <th>Event Type</th>
+                    <th>Employee</th>
+                    <th>Location</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var h in Model.StatusHistory)
+                {
+                    <tr>
+                        <td>@h.LastUpdate.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>@h.Note</td>
+                        <td>@h.EventType</td>
+                        <td>@h.EmployeeName</td>
+                        <td>@h.Location</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No status history available for this fridge.</p>
+    }
+
+    <!-- Fault Reports -->
+    <h2>Fault Reports</h2>
+    @if (Model.FaultReports != null && Model.FaultReports.Any())
+    {
+        <table class="table table-bordered table-striped">
+            <thead class="table-light">
+                <tr>
+                    <th>Date Reported</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>Reported By</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var f in Model.FaultReports)
+                {
+                    <tr>
+                        <td>@f.ReportedDate.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>@f.Title</td>
+                        <td>@f.Description</td>
+                        <td>@f.PriorityLevel</td>
+                        <td>@f.Status</td>
+                        <td>@f.ReportedBy</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No fault reports for this fridge.</p>
+    }
+
+    <!-- Maintenance History -->
+    <h2>Maintenance History</h2>
+    @if (Model.MaintenanceHistory != null && Model.MaintenanceHistory.Any())
+    {
+        <table class="table table-bordered table-striped">
+            <thead class="table-light">
+                <tr>
+                    <th>Scheduled Date</th>
+                    <th>Service Type</th>
+                    <th>Technician</th>
+                    <th>Status</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var m in Model.MaintenanceHistory)
+                {
+                    <tr>
+                        <td>@m.ScheduledDate.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>@m.ServiceType</td>
+                        <td>@m.TechnicianName</td>
+                        <td>@m.Status</td>
+                        <td>@m.Notes</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No maintenance history available for this fridge.</p>
+    }
+
+    <!-- Back Button -->
+    <div class="mt-4">
+        <a asp-action="FridgeUnit" class="btn btn-secondary">Back to Fridge Units</a>
+    </div>
+</div>
+
+

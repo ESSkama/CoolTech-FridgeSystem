@@ -1,0 +1,40 @@
+﻿@model List<CartItem>
+
+<h2>Your Cart</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
+@if (!Model.Any())
+{
+    <p>Your cart is empty.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Fridge</th>
+                <th>Quantity</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.FridgeName</td>
+                <td>@item.Quantity</td>
+                <td>
+                    <a asp-action="RemoveFromCart" asp-route-fridgeId="@item.FridgeId" class="btn btn-danger btn-sm">Remove</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+<a asp-controller="Cart" asp-action="CreateRequest" class="btn btn-primary">Create Request</a>
+    <a asp-action="ClearCart" class="btn btn-warning">Clear Cart</a>
+
+}

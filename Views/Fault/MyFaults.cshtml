@@ -1,0 +1,30 @@
+﻿@model IEnumerable<FridgeSystem.Models.FridgeFault>
+
+<h2>My Logged Faults</h2>
+<hr />
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Fridge Model</th>
+            <th>Status</th>
+            <th>Logged Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var fault in Model)
+        {
+            <tr>
+                <td>@fault.Title</td>
+                <td>@fault.CustomerFridge?.Fridge?.Model</td>
+                <td>@fault.Status</td>
+                <td>@fault.LoggedDate.ToString("dd MMM yyyy hh:mm tt")</td>
+                <td>
+                    <a asp-action="FaultDetails" asp-route-id="@fault.FridgeFaultId" class="btn btn-sm btn-info">Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

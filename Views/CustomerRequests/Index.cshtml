@@ -1,0 +1,69 @@
+﻿@model IEnumerable<FridgeSystem.Models.FridgeRequest>
+
+@{
+    ViewData["Title"] = "My Fridge Requests";
+}
+
+<h1>My Fridge Requests</h1>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New Request</a>
+</p>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">You have no pending or past fridge requests.</div>
+}
+else
+{
+    <div class="accordion" id="fridgeRequestsAccordion">
+        @foreach (var request in Model)
+        {
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="heading_@request.RequestId">
+                    <button class="accordion-button @(request.Status == FridgeSystem.Models.RequestStatus.Pending ? "" : "collapsed")" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_@request.RequestId" aria-expanded="@(request.Status == FridgeSystem.Models.RequestStatus.Pending ? "true" : "false")" aria-controls="collapse_@request.RequestId">
+                        Request #@request.RequestId - Status: @request.Status - Date: @request.RequestDate.ToShortDateString()
+                    </button>
+                </h2>
+                <div id="collapse_@request.RequestId" class="accordion-collapse collapse @(request.Status == FridgeSystem.Models.RequestStatus.Pending ? "show" : "")" aria-labelledby="heading_@request.RequestId" data-bs-parent="#fridgeRequestsAccordion">
+                    <div class="accordion-body">
+                        <h5>Request Details</h5>
+                        <p><strong>Contact Number:</strong> @request.ContactNumber</p>
+                        <p><strong>Pickup Warehouse:</strong> @request.Warehouse.Name (@request.Warehouse.City)</p>
+                        <p><strong>Preferred Pickup Date:</strong> @request.PreferredPickup.ToShortDateString()</p>
+                        <p><strong>Special Instructions:</strong> @(string.IsNullOrEmpty(request.SpecialInstructions) ? "None" : request.SpecialInstructions)</p>
+
+                        <h6>Requested Items:</h6>
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Fridge Model</th>
+                                    <th>Quantity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in request.FridgeRequestItems)
+                                {
+                                    <tr>
+                                        <td>@item.Fridge.Model (@item.Fridge.Category)</td>
+                                        <td>@item.Quantity</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        <a asp-action="Details" asp-route-id="@request.RequestId" class="btn btn-info btn-sm">View Full Details</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

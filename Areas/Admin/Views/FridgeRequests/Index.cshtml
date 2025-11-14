@@ -1,0 +1,53 @@
+﻿@model IEnumerable<FridgeSystem.Models.FridgeRequest>
+
+<h2>Customer Fridge Requests</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Request ID</th>
+            <th>Customer</th>
+            <th>Request Date</th>
+            <th>Status</th>
+            <th>Fridges Requested</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var request in Model)
+        {
+            <tr>
+                <td>@request.RequestId</td>
+                <td>@request.Customer?.UserName</td>
+                <td>@request.RequestDate.ToShortDateString()</td>
+                <td>@request.Status</td>
+                <td>
+                    @foreach (var item in request.FridgeRequestItems)
+                    {
+                        <div>@item.Fridge?.Model - Qty: @item.Quantity</div>
+                    }
+                </td>
+                <td>
+                    @if (request.Status == FridgeSystem.Models.RequestStatus.Pending)
+                    {
+                        <form asp-action="Approve" method="post" style="display:inline;">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="id" value="@request.RequestId" />
+    <button type="submit" class="btn btn-success btn-sm">Approve</button>
+</form>
+
+<form asp-action="Decline" method="post" style="display:inline;">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="id" value="@request.RequestId" />
+    <button type="submit" class="btn btn-danger btn-sm">Decline</button>
+</form>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Actioned</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

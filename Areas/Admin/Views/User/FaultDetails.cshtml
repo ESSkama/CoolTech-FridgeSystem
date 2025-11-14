@@ -1,0 +1,50 @@
+﻿@model FridgeSystem.Models.FridgeFault
+
+@{
+    ViewData["Title"] = "Fault Details";
+}
+
+<h2>Fault Details</h2>
+<hr />
+
+<div class="card shadow-sm p-3 mb-4">
+    <div class="row">
+         <div class="col-md-4 text-center">
+            @if (Model.CustomerFridge?.Fridge?.FridgeImage != null)
+            {
+                <img src="@Model.CustomerFridge.Fridge.FridgeImage" alt="Fridge Image" class="img-fluid rounded" />
+            }
+            else
+            {
+                <img src="~/images/no-image.png" alt="No Image" class="img-fluid rounded" />
+            }
+        </div>
+
+        <div class="col-md-8">
+            <h4>@Model.Title</h4>
+            <p><strong>Category:</strong> @Model.SelectedCategory</p>
+            <p><strong>Description:</strong> @Model.FaultDescription</p>
+            <p><strong>Branch:</strong> @Model.CustomerFridge?.CustomerLocation?.BranchName</p>
+            <p><strong>Warehouse:</strong> @Model.CustomerFridge?.Warehouse?.Name</p>
+            <p><strong>Status:</strong> @Model.Status</p>
+            <p><strong>Date Logged:</strong> @Model.LoggedDate.ToString("dd MMM yyyy HH:mm")</p>
+
+            @if (Model.CustomerFridge?.Fridge != null)
+            {
+                <h5 class="mt-3">Fridge Details</h5>
+                <p><strong>Model:</strong> @Model.CustomerFridge.Fridge.Model</p>
+                <p><strong>Serial No:</strong> @Model.CustomerFridge.Fridge.SerialNumber</p>
+            }
+
+            @if (Model.Status == FridgeSystem.Models.FaultStatus.Logged)
+            {
+                <form asp-action="AssignFault" method="get">
+                    <input type="hidden" name="faultId" value="@Model.FridgeFaultId" />
+                    <button type="submit" class="btn btn-primary mt-3">Assign Technician</button>
+                </form>
+            }
+
+            <a asp-action="LoggedFaults" class="btn btn-secondary mt-3">Back to Logged Faults</a>
+        </div>
+    </div>
+</div>

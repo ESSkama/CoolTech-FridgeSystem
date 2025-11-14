@@ -1,0 +1,178 @@
+﻿@{
+    ViewData["Title"] = "Business Stats Dashboard";
+
+    var rentals = ViewBag.RentalsTrend as IEnumerable<dynamic>;
+    var faults = ViewBag.FaultTrends as IEnumerable<dynamic>;
+    var maintenanceSuccessRate = ViewBag.MaintenanceSuccessRate;
+    var maintenanceFailedRate = ViewBag.MaintenanceFailedRate;
+    var customerGrowthRate = ViewBag.CustomerGrowthRate;
+    var topCustomers = ViewBag.TopCustomers as IEnumerable<dynamic>;
+    var commonFaults = ViewBag.CommonFaults as IEnumerable<dynamic>;
+    DateTime startDate = ViewBag.StartDate;
+    DateTime endDate = ViewBag.EndDate;
+}
+
+<h2>Business Stats Dashboard</h2>
+
+<!-- Date Filter -->
+<form method="get" class="row mb-4">
+    <div class="col-md-3">
+        <label>Start Date</label>
+        <input type="date" name="startDate" value="@startDate.ToString("yyyy-MM-dd")" class="form-control" />
+    </div>
+    <div class="col-md-3">
+        <label>End Date</label>
+        <input type="date" name="endDate" value="@endDate.ToString("yyyy-MM-dd")" class="form-control" />
+    </div>
+    <div class="col-md-3 align-self-end">
+        <button type="submit" class="btn btn-primary">Filter</button>
+        <a asp-action="Index" class="btn btn-secondary">Reset</a>
+    </div>
+</form>
+
+<hr />
+
+<!-- Summary Cards -->
+<div class="row text-center mb-4">
+    <div class="col-md-4">
+        <div class="border rounded p-3">
+            <h5>Maintenance Success Rate</h5>
+            <h3>@maintenanceSuccessRate %</h3>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="border rounded p-3">
+            <h5>Maintenance Failed Rate</h5>
+            <h3>@maintenanceFailedRate %</h3>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="border rounded p-3">
+            <h5>Average Monthly Customer Growth</h5>
+            <h3>@customerGrowthRate %</h3>
+        </div>
+    </div>
+</div>
+
+<hr />
+
+<!-- Rentals Trend -->
+<h4>Rentals Trend (Fridges Picked Up per Month)</h4>
+<canvas id="rentalsChart" height="80"></canvas>
+
+<hr />
+
+<!-- Faults Trend -->
+<h4>Fault Trends (Logged per Month)</h4>
+<canvas id="faultsChart" height="80"></canvas>
+
+<hr />
+
+<!-- Maintenance Success vs Failed Pie Chart -->
+<h4>Maintenance Success vs Failed</h4>
+<canvas id="maintenanceChart" height="80"></canvas>
+
+<hr />
+
+<!-- Top 5 Businesses -->
+<h4>Top 5 Businesses by Rentals</h4>
+<canvas id="topCustomersChart" height="80"></canvas>
+
+<hr />
+
+<!-- Most Common Fault Types -->
+<h4>Most Common Fault Types</h4>
+<canvas id="commonFaultsChart" height="80"></canvas>
+
+<!-- ===================== -->
+<!-- Chart.js Integration -->
+<!-- ===================== -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Rentals Trend Line Chart
+    const rentalsCtx = document.getElementById('rentalsChart');
+    if (rentalsCtx) {
+        new Chart(rentalsCtx, {
+            type: 'line',
+            data: {
+                labels: [@string.Join(",", rentals.Select(r => $"'{r.Month}'"))],
+                datasets: [{
+                    label: 'Rentals per Month',
+                    data: [@string.Join(",", rentals.Select(r => r.Count))],
+                    borderColor: 'blue',
+                    borderWidth: 2,
+                    fill: false
+                }]
+            },
+            options: { responsive: true }
+        });
+    }
+
+    // Faults Trend Bar Chart
+    const faultsCtx = document.getElementById('faultsChart');
+    if (faultsCtx) {
+        new Chart(faultsCtx, {
+            type: 'bar',
+            data: {
+                labels: [@string.Join(",", faults.Select(f => $"'{f.Month}'"))],
+                datasets: [{
+                    label: 'Faults per Month',
+                    data: [@string.Join(",", faults.Select(f => f.Count))],
+                    backgroundColor: 'orange'
+                }]
+            },
+            options: { responsive: true }
+        });
+    }
+
+    // Maintenance Success vs Failed Pie Chart
+    const maintenanceCtx = document.getElementById('maintenanceChart');
+    if (maintenanceCtx) {
+        new Chart(maintenanceCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Success', 'Failed'],
+                datasets: [{
+                    label: 'Maintenance',
+                    data: [@maintenanceSuccessRate, @maintenanceFailedRate],
+                    backgroundColor: ['green', 'red']
+                }]
+            },
+            options: { responsive: true }
+        });
+    }
+
+    // Top 5 Businesses Bar Chart
+    const topCustomersCtx = document.getElementById('topCustomersChart');
+    if (topCustomersCtx) {
+        new Chart(topCustomersCtx, {
+            type: 'bar',
+            data: {
+                labels: [@string.Join(",", topCustomers.Select(c => $"'{c.BusinessName}'"))],
+                datasets: [{
+                    label: 'Rentals',
+                    data: [@string.Join(",", topCustomers.Select(c => c.RentalCount))],
+                    backgroundColor: 'green'
+                }]
+            },
+            options: { responsive: true }
+        });
+    }
+
+    // Common Faults Pie Chart
+    const commonFaultsCtx = document.getElementById('commonFaultsChart');
+    if (commonFaultsCtx) {
+        new Chart(commonFaultsCtx, {
+            type: 'pie',
+            data: {
+                labels: [@string.Join(",", commonFaults.Select(f => $"'{f.FaultType}'"))],
+                datasets: [{
+                    label: 'Fault Count',
+                    data: [@string.Join(",", commonFaults.Select(f => f.Count))],
+                    backgroundColor: ['red', 'orange', 'yellow', 'blue', 'purple']
+                }]
+            },
+            options: { responsive: true }
+        });
+    }
+</script>

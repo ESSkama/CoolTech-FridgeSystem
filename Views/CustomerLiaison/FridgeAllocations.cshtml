@@ -1,0 +1,55 @@
+﻿@model IEnumerable<FridgeSystem.Models.ViewModels.FridgeAllocationViewModel>
+
+@{
+    ViewData["Title"] = "Fridge Allocations";
+}
+
+<h1 class="dashboard-title">Fridge Allocations</h1>
+
+<div style="margin-bottom: 20px;">
+    <a asp-action="CreateAllocation" class="form-button add-button">Allocate Fridge</a>
+</div>
+
+<table class="employees-table">
+    <thead>
+        <tr>
+            <th>Customer</th>
+            <th>Branch</th>
+            <th>Fridge Model</th>
+            <th>Serial Number</th>
+            <th>Allocated By</th>
+            <th>Allocated Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var a in Model)
+            {
+                <tr>
+                    <td>@a.BusinessName</td>
+                    <td>@a.BranchName</td>
+                    <td>@a.Model</td>
+                    <td>@a.SerialNumber</td>
+                    <td>@a.AllocatedById</td>
+                    <td>@a.AllocatedDate.ToString("yyyy-MM-dd")</td>
+                    <td>
+                        <a asp-action="EditAllocation" asp-route-id="@a.AllocationId" class="btn-action edit-btn">Edit</a>
+                        <a asp-action="CancelAllocation" asp-route-id="@a.AllocationId" class="btn-action delete-btn"
+                           onclick="return confirm('Are you sure you want to cancel this allocation?');">
+                            Cancel
+                        </a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="7" style="text-align:center;">No allocations found.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+

@@ -1,0 +1,58 @@
+﻿@model IEnumerable<FridgeSystem.Models.FridgeRequest>
+
+<h1>Fridge Requests</h1>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Request ID</th>
+            <th>Customer</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Fridges</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var request in Model)
+        {
+            <tr>
+                <td>@request.RequestId</td> <!-- Make sure this matches your model -->
+                <td>@request.Customer?.BusinessName</td>
+                <td>@request.RequestDate.ToShortDateString()</td>
+                <td>@request.Status</td>
+                <td>
+                    @if (request.FridgeRequestItems != null && request.FridgeRequestItems.Any())
+                    {
+                        foreach (var item in request.FridgeRequestItems)
+                        {
+                            <span>@item.Fridge?.Model</span><br />
+                        }
+                    }
+                    else
+                    {
+                        <span>No fridges requested</span>
+                    }
+                </td>
+                <td>
+                    @if (request.Status == FridgeSystem.Models.RequestStatus.Pending)
+                    {
+                        <form asp-action="ApproveRequest" method="post" style="display:inline">
+                            <input type="hidden" name="requestId" value="@request.RequestId" />
+                            <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                        </form>
+
+                        <form asp-action="DeclineRequest" method="post" style="display:inline">
+                            <input type="hidden" name="requestId" value="@request.RequestId" />
+                            <button type="submit" class="btn btn-danger btn-sm">Decline</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Actioned</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,55 @@
+﻿@model FridgeSystem.Models.FridgeFault
+
+@{
+    ViewData["Title"] = "Fault Details";
+}
+
+<h2>Fault Details</h2>
+<hr />
+
+<div class="card shadow-sm p-3 mb-4">
+    <div class="row">
+        <div class="col-md-4 text-center">
+            <img src="@(Model.CustomerFridge?.Fridge?.FridgeImage ?? "/images/no-image.png")" 
+                 alt="Fridge Image" class="img-fluid rounded" />
+        </div>
+
+        <div class="col-md-8">
+            <h4>@Model.Title</h4>
+            <p><strong>Category:</strong> @Model.SelectedCategory</p>
+            <p><strong>Description:</strong> @Model.FaultDescription</p>
+            <p><strong>Status:</strong> @Model.Status</p>
+            <p><strong>Date Logged:</strong> @Model.LoggedDate.ToString("dd MMM yyyy HH:mm")</p>
+
+            @if (Model.CustomerFridge?.Fridge != null)
+            {
+                <h5 class="mt-3">Fridge Details</h5>
+                <p><strong>Model:</strong> @Model.CustomerFridge.Fridge.Model</p>
+                <p><strong>Serial No:</strong> @Model.CustomerFridge.Fridge.SerialNumber</p>
+            }
+
+            @* Assigned Technician *@
+            @if (Model.AssignedFaults != null && Model.AssignedFaults.Any())
+            {
+                var assignment = Model.AssignedFaults.FirstOrDefault();
+                <p><strong>Assigned Technician:</strong> @assignment?.Technician?.FirstName @assignment?.Technician?.LastName</p>
+                <p><strong>Assignment Date:</strong> @assignment?.AssignmentDate.ToString("yyyy-MM-dd HH:mm")</p>
+            }
+
+            @* Diagnose button *@
+            @if (Model.Status == FridgeSystem.Models.FaultStatus.Assigned)
+            {
+                <a asp-action="StartDiagnosis" asp-route-id="@Model.FridgeFaultId" class="btn btn-warning mt-3">
+                    Diagnose
+                </a>
+            }
+             @if (Model.Status == FridgeSystem.Models.FaultStatus.Scheduled)
+             {
+                 <a asp-action="ServiceSchedule" asp-route-id="@Model.FridgeFaultId" class="btn btn-info mt-3">
+                             View Service Schedule
+                  </a>
+             }
+            <a asp-action="Index" class="btn btn-secondary mt-3">Back to Dashboard</a>
+        </div>
+    </div>
+</div>

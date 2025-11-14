@@ -1,0 +1,59 @@
+﻿@model IEnumerable<FridgeSystem.Models.ViewModels.EmployeeNotificationViewModel>
+
+@{
+    ViewData["Title"] = "Employee Notifications";
+}
+
+<h1 class="dashboard-title">Notifications</h1>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<div style="margin-bottom: 15px;">
+    <form asp-action="MarkAllAsRead" method="post" style="display:inline;">
+        @Html.AntiForgeryToken()
+        <button type="submit" class="btn btn-primary btn-sm">Mark All as Read</button>
+    </form>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Message</th>
+            <th>Date Sent</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var n in Model)
+            {
+                <tr class="@(n.IsRead ? "" : "table-warning")">
+                    <td>@n.Message</td>
+                    <td>@n.SentDate.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>@(n.IsRead ? "Read" : "Unread")</td>
+                    <td>
+                        @if (!n.IsRead)
+                        {
+                            <form asp-action="MarkAsRead" method="post" style="display:inline;">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@n.NotificationId" />
+                                <button type="submit" class="btn btn-success btn-sm">Mark as Read</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4" style="text-align:center;">No notifications found.</td>
+            </tr>
+        }
+    </tbody>
+</table>

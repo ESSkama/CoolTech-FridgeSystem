@@ -1,0 +1,53 @@
+﻿@model IEnumerable<FridgeSystem.Models.FridgeRequestViewModel>
+
+@{
+    ViewData["Title"] = "Fridge Requests";
+}
+
+<h1 class="dashboard-title">Fridge Requests</h1>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Info"] != null)
+{
+    <div class="alert alert-info">@TempData["Info"]</div>
+}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Customer</th>
+            <th>Branch</th>
+            <th>Contact Number</th>
+            <th>Preferred Pickup</th>
+            <th>Fridges Requested</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var r in Model)
+        {
+            <tr>
+                <td>@r.BusinessName</td>
+                <td>@r.BranchName</td>
+                <td>@r.ContactNumber</td>
+                <td>@r.PreferredPickup.ToShortDateString()</td>
+                <td>
+                    @foreach (var f in r.RequestedFridges)
+                    {
+                        <div>@f.Model (Qty: @f.Quantity)</div>
+                    }
+                </td>
+                <td>
+                    <a asp-action="ApproveRequest" asp-route-id="@r.RequestId" class="btn btn-success btn-sm">Approve</a>
+                    <form asp-action="RejectRequest" asp-route-id="@r.RequestId" method="post" style="display:inline;">
+                        <input type="hidden" name="reason" value="Rejected by liaison" />
+                        <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

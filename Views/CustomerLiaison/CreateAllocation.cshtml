@@ -1,0 +1,126 @@
+﻿@model FridgeSystem.Models.ViewModels.FridgeAllocationViewModel
+
+@{
+    ViewData["Title"] = "Allocate Fridges";
+}
+
+<h1 class="dashboard-title">Allocate Fridges</h1>
+
+<div style="margin-bottom: 10px;">
+    <a asp-action="Allocations" class="form-button btn-secondary">← Back to Allocations</a>
+</div>
+
+<div class="form-container" style="max-width: 650px; margin:auto;">
+    <form asp-action="CreateAllocation" method="post">
+        @Html.AntiForgeryToken()
+
+        <label asp-for="BusinessId">Customer</label>
+        <select asp-for="BusinessId" asp-items="Model.Customers" class="form-input" id="customerSelect">
+            <option value="">-- Select Customer --</option>
+        </select>
+        <span asp-validation-for="BusinessId" class="text-danger"></span>
+
+        <label asp-for="LocationId" style="margin-top:10px;">Location</label>
+        <select asp-for="LocationId" asp-items="Model.Locations" class="form-input" id="locationSelect">
+            <option value="">-- Select Location --</option>
+        </select>
+        <span asp-validation-for="LocationId" class="text-danger"></span>
+
+        <div id="fridgesContainer" style="margin-top:10px;">
+            @for (int i = 0; i < Model.RequestedFridges.Count; i++)
+            {
+                <div class="fridge-item" style="margin-bottom:10px; border-bottom:1px solid #ccc; padding-bottom:10px;">
+                    <label>Fridge</label>
+                    <select asp-for="@Model.RequestedFridges[i].SelectedFridgeId" asp-items="Model.Fridges" class="form-input">
+                        <option value="">-- Select Fridge --</option>
+                    </select>
+                    <span asp-validation-for="@Model.RequestedFridges[i].SelectedFridgeId" class="text-danger"></span>
+
+                    <label style="margin-top:5px;">Quantity</label>
+                    <input type="number" min="1" asp-for="@Model.RequestedFridges[i].Quantity" class="form-input" />
+                    <span asp-validation-for="@Model.RequestedFridges[i].Quantity" class="text-danger"></span>
+
+                    <button type="button" class="form-button btn-danger removeFridgeBtn" style="margin-top:5px;">Remove Fridge</button>
+                </div>
+            }
+        </div>
+
+        <button type="button" id="addFridgeBtn" class="form-button" style="margin-top:10px;">Add Another Fridge</button>
+
+        <div style="margin-top:20px; display:flex; gap:10px;">
+            <button type="submit" class="form-button btn-success">Allocate All</button>
+            <a asp-action="Allocations" class="form-button btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        const fridgesContainer = document.getElementById("fridgesContainer");
+
+        function attachRemoveEvent(item) {
+            const btn = item.querySelector(".removeFridgeBtn");
+            btn.addEventListener("click", function () {
+                if (fridgesContainer.querySelectorAll(".fridge-item").length > 1) {
+                    item.remove();
+                    reindexFridges();
+                } else {
+                    alert("At least one fridge must be selected.");
+                }
+            });
+        }
+
+        function reindexFridges() {
+            fridgesContainer.querySelectorAll(".fridge-item").forEach((item, idx) => {
+                item.querySelectorAll("select, input").forEach(el => {
+                    if (el.name) el.name = el.name.replace(/\[\d+\]/, `[${idx}]`);
+                    if (el.id) el.id = el.id.replace(/\_\d+__/, `_${idx}__`);
+                });
+                item.querySelectorAll("span.text-danger").forEach(span => {
+                    const attr = span.getAttribute("data-valmsg-for");
+                    if (attr) span.setAttribute("data-valmsg-for", attr.replace(/\[\d+\]/, `[${idx}]`));
+                });
+            });
+        }
+
+        document.getElementById("addFridgeBtn").addEventListener("click", function () {
+            const firstItem = fridgesContainer.querySelector(".fridge-item");
+            const clone = firstItem.cloneNode(true);
+
+            clone.querySelectorAll("select").forEach(s => s.selectedIndex = 0);
+            clone.querySelectorAll("input[type=number]").forEach(n => n.value = 1);
+
+            fridgesContainer.appendChild(clone);
+            attachRemoveEvent(clone);
+            reindexFridges();
+
+            $.validator.unobtrusive.parse(clone);
+        });
+
+        document.querySelectorAll(".fridge-item").forEach(item => attachRemoveEvent(item));
+
+        // AJAX: populate locations dynamically when customer changes
+        document.getElementById("customerSelect").addEventListener("change", function () {
+            const customerId = this.value;
+            const locationSelect = document.getElementById("locationSelect");
+            locationSelect.innerHTML = '<option value="">Loading...</option>';
+
+            if (!customerId) {
+                locationSelect.innerHTML = '<option value="">-- Select Location --</option>';
+                return;
+            }
+
+            fetch(`/CustomerLiaison/GetCustomerLocations?customerId=${customerId}`)
+                .then(res => res.json())
+                .then(data => {
+                    locationSelect.innerHTML = '<option value="">-- Select Location --</option>';
+                    data.forEach(l => {
+                        locationSelect.innerHTML += `<option value="${l.id}">${l.text}</option>`;
+                    });
+                });
+        });
+    </script>
+}
+

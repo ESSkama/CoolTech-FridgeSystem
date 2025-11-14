@@ -1,0 +1,98 @@
+﻿@model IEnumerable<FridgeSystem.Models.ViewModels.FridgeUnitViewModel>
+
+@{
+    ViewData["Title"] = "Fridge Units";
+}
+
+<h2 class="mb-4 text-center">Fridge Units</h2>
+
+<!-- TempData Alerts -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div id="tempAlert" class="alert alert-success text-center">
+        @TempData["SuccessMessage"]
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div id="tempAlert" class="alert alert-danger text-center">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<!-- Search and Filter Form -->
+<form asp-action="FridgeUnit" method="get" class="mb-3 d-flex flex-wrap gap-2 justify-content-center">
+    <input type="text" name="searchTerm" class="form-control w-auto" placeholder="Search by model, color, or spec" />
+    <select name="warehouseId" class="form-select w-auto">
+        <option value="">All Warehouses</option>
+        @foreach (var warehouse in ViewBag.Warehouses as List<SelectListItem>)
+        {
+            <option value="@warehouse.Value">@warehouse.Text</option>
+        }
+    </select>
+    <button type="submit" class="btn btn-primary">Search</button>
+    <a asp-action="AddFridgeUnit" class="btn btn-success">Add Fridge Unit</a>
+</form>
+
+<!-- Fridge Units List -->
+@if (Model != null && Model.Any())
+{
+    <table class="table table-bordered table-hover align-middle text-center">
+        <thead class="table-light">
+            <tr>
+                <th>Model</th>
+                <th>Serial Number</th>
+                <th>Color</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Warehouse</th>
+                <th>Stock Qty</th>
+                <th>Supplier</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var fridge in Model)
+            {
+                <tr>
+                    <td>@fridge.Model</td>
+                    <td>@fridge.SerialNumber</td>
+                    <td>@fridge.FridgeColor</td>
+                    <td>@fridge.FridgeDescription</td>
+                    <td>@(fridge.IsAvailable == true ? "Available" : "Allocated")</td>
+                    <td>@string.Join(", ", fridge.WarehouseNames)</td>
+                    <td>@fridge.StockQuantity</td>
+                    <td>@fridge.SupplierName</td>
+                    <td class="text-nowrap">
+                        <a asp-action="EditFridgeUnit" asp-route-id="@fridge.FridgeId" class="btn btn-warning btn-sm">Edit</a>
+                        <a asp-action="ScrapFridge" asp-route-id="@fridge.FridgeId" class="btn btn-danger btn-sm">Scrap</a>
+                        <a asp-action="FridgeDetails" asp-route-id="@fridge.FridgeId" class="btn btn-info btn-sm">Details</a>
+                        <a asp-action="FridgeHistory" asp-route-fridgeId="@fridge.FridgeId" class="btn btn-secondary btn-sm">History</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- Back Button -->
+    <div class="text-center mt-4">
+        <a asp-controller="InventoryLiaison" asp-action="Dashboard" class="btn btn-outline-secondary">Back to Dashboard</a>
+    </div>
+}
+else
+{
+    <p class="text-center text-muted mt-5">No fridges found.</p>
+}
+
+
+<script>
+    setTimeout(() => {
+        const alertBox = document.getElementById("tempAlert");
+        if (alertBox) {
+            alertBox.style.transition = "opacity 0.5s ease";
+            alertBox.style.opacity = "0";
+            setTimeout(() => alertBox.remove(), 500);
+        }
+    }, 4000);
+</script>
+

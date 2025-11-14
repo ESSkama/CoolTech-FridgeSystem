@@ -1,0 +1,59 @@
+﻿@model FridgeSystem.Models.FridgeFault
+
+@{
+    ViewData["Title"] = "Schedule Service Date";
+}
+
+<h2>Schedule Service Date</h2>
+<hr />
+
+<div class="card shadow-sm p-3 mb-4">
+    <div class="mb-3">
+        <label><strong>Customer:</strong></label>
+        <p>@Model.CustomerFridge?.CustomerLocation?.Customer?.BusinessName</p>
+    </div>
+
+    <div class="mb-3">
+        <label><strong>Contact Person:</strong></label>
+        <p>@Model.CustomerFridge?.CustomerLocation?.ContactPerson</p>
+    </div>
+</div>
+
+<form asp-action="CreateServiceSchedule" method="post">
+    <input type="hidden" name="FridgeFaultId" value="@Model.FridgeFaultId" />
+
+    <div class="mb-3">
+        <label for="ScheduledDate">Service Date</label>
+        <input type="date" name="ScheduledDate" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+        <label for="ScheduledTime">Service Time</label>
+        <input type="time" name="ScheduledTime" class="form-control" required />
+    </div>
+
+    <button type="submit" class="btn btn-success">Confirm Schedule</button>
+    <a asp-action="FaultDetails" asp-route-id="@Model.FridgeFaultId" class="btn btn-secondary">Cancel</a>
+</form>
+
+<hr />
+
+<h4>Existing Scheduled Repairs</h4>
+
+@if (Model.ServiceSchedules != null && Model.ServiceSchedules.Any())
+{
+    @foreach (var schedule in Model.ServiceSchedules)
+    {
+        <div class="card mb-3 p-3 shadow-sm">
+            <p><strong>Repair Date & Time:</strong> @schedule.StartDate.ToString("yyyy-MM-dd HH:mm")</p>
+            <p><strong>Technician:</strong> @schedule.Employee?.FirstName @schedule.Employee?.LastName</p>
+            <a asp-action="CompleteRepair" asp-route-id="@schedule.FridgeFaultId" class="btn btn-success">
+                Mark as Completed
+            </a>
+        </div>
+    }
+}
+else
+{
+    <p>No service schedules set yet.</p>
+}

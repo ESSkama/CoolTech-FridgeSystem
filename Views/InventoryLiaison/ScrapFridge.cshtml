@@ -1,0 +1,37 @@
+﻿@model FridgeSystem.Models.ViewModels.ScrapFridgeViewModel
+
+<div class="form-container">
+    <h1 class="dashboard-title">Scrap Fridge</h1>
+
+    <p>
+        Are you sure you want to scrap the fridge:
+        <strong>@Model.Model</strong>
+        @if (!string.IsNullOrEmpty(Model.WarehouseName))
+        {
+            <span>(Warehouse: @Model.WarehouseName)</span>
+        }
+    </p>
+
+    <p>Quantity in Stock: <strong>@Model.QuantityInStock</strong></p>
+
+    <form asp-action="ScrapFridge" method="post">
+        @Html.AntiForgeryToken() <!-- Add this line -->
+
+        <input type="hidden" asp-for="FridgeId" />
+
+        <div>
+            <label class="form-label" asp-for="Reason">Reason for Scrapping</label>
+            <textarea class="form-input" asp-for="Reason" rows="3" placeholder="Enter reason for scrapping"></textarea>
+            <span asp-validation-for="Reason" class="text-danger"></span>
+        </div>
+
+        <div class="mt-3 d-flex gap-2 flex-wrap">
+            <button type="submit" class="btn btn-danger">Confirm Scrap</button>
+            <a asp-action="FridgeUnit" class="btn btn-secondary">Back to Fridge Units</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,89 @@
+﻿@model FridgeSystem.Models.ViewModels.InvLiaisonDashboardViewModel
+
+<h1 class="dashboard-title">Inventory Dashboard</h1>
+
+<!-- Summary Cards -->
+<div class="dashboard-summary">
+    <div class="summary-card">
+        <h5>Total Fridges</h5>
+        <p>@Model.TotalFridgesInInventory</p>
+    </div>
+    <div class="summary-card">
+        <h5>Low Stock Alerts</h5>
+        <p>@Model.LowStockAlerts</p>
+    </div>
+    <div class="summary-card">
+        <h5>Pending Purchase Requests</h5>
+        <p>@Model.PendingPurchaseRequests</p>
+    </div>
+    <div class="summary-card">
+        <h5>Unread Notifications</h5>
+        <p>@Model.UnreadNotifications</p>
+    </div>
+</div>
+
+<!-- Dashboard Actions -->
+<div class="dashboard-actions-vertical">
+    <a asp-controller="InventoryLiaison" asp-action="Inventory" class="btn-primary">Inventory</a>
+    <a asp-controller="InventoryLiaison" asp-action="FridgeUnit" class="btn-primary">Fridge Units</a>
+    <a asp-controller="InventoryLiaison" asp-action="PurchaseRequests" class="btn-primary">Purchase Requests</a>
+    <a asp-controller="InventoryLiaison" asp-action="StockAlert" class="btn-primary">Stock Alerts</a>
+    <a asp-controller="InventoryLiaison" asp-action="EmployeeNotifications" class="btn-primary">Notifications</a>
+</div>
+
+<!-- Recent Fridge Additions -->
+<div class="card-blue" style="margin-top: 30px;">
+    <h3>Recent Fridge Additions</h3>
+    <ul>
+        @foreach (var fridge in Model.RecentFridgeAdditions)
+        {
+            <li>@fridge</li>
+        }
+    </ul>
+</div>
+
+<!-- Recent Notifications -->
+<div class="card-blue" style="margin-top: 20px;">
+    <h3>Recent Notifications</h3>
+    <ul>
+        @foreach (var note in Model.RecentNotifications)
+        {
+            <li>@note.Message - <small>@note.SentDate.ToString("g")</small></li>
+        }
+    </ul>
+</div>
+
+<!-- Low Stock Alerts Table -->
+<div class="card-blue" style="margin-top: 20px;">
+    <h3>Low Stock Alerts</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Model</th>
+                <th>Category</th>
+                <th>Quantity</th>
+                <th>Supplier</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.LowStockAlertsList != null && Model.LowStockAlertsList.Any())
+            {
+                @foreach (var alert in Model.LowStockAlertsList)
+                {
+                    <tr>
+                        <td>@alert.Model</td>
+                        <td>@alert.Category</td>
+                        <td>@alert.QuantityInStock</td>
+                        <td>@alert.SupplierName</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4">No low stock alerts.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

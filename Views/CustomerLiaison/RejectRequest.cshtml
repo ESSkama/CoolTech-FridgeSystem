@@ -1,0 +1,40 @@
+﻿@model FridgeSystem.Models.FridgeRequestViewModel
+
+@{
+    ViewData["Title"] = "Reject Fridge Request";
+}
+
+<h1 class="dashboard-title">Reject Fridge Request</h1>
+
+<div style="margin-bottom:10px;">
+    <a asp-action="FridgeRequests" class="btn btn-secondary">← Back to Requests</a>
+</div>
+
+<div class="form-container" style="max-width:600px; margin:auto;">
+    <form asp-action="RejectRequest" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="RequestId" />
+
+        <div class="mb-3">
+            <label>Customer</label>
+            <input class="form-control" value="@Model.BusinessName" readonly />
+        </div>
+
+        <div class="mb-3">
+            <label>Branch</label>
+            <input class="form-control" value="@Model.BranchName" readonly />
+        </div>
+
+        <div class="mb-3">
+            <label>Rejection Reason</label>
+            <textarea class="form-control" name="reason" required></textarea>
+            <span class="text-danger">Please provide a reason for rejection.</span>
+        </div>
+
+        <div style="margin-top:10px;">
+            <button type="submit" class="btn btn-danger">Reject Request</button>
+            <a asp-action="FridgeRequests" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+

@@ -1,0 +1,119 @@
+﻿@model FridgeSystem.Models.FridgeRequestViewModel
+@using Microsoft.AspNetCore.Mvc.Rendering // Required for SelectListItem
+@using FridgeSystem.Models // Ensure your models namespace is included to access FridgeCategory
+
+@{
+    ViewData["Title"] = "New Fridge Request";
+}
+
+<h1>New Fridge Request</h1>
+<hr />
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div> @* Display all model errors *@
+
+    <div class="row">
+        <div class="col-md-6">
+            <!-- Contact Number -->
+            <div class="mb-3">
+                <label asp-for="ContactNumber" class="form-label">Telephone</label>
+                <input asp-for="ContactNumber" class="form-control" readonly />
+                <span asp-validation-for="ContactNumber" class="text-danger"></span>
+            </div>
+            <!-- Contact Person -->
+            <div class="mb-3">
+                <label asp-for="ContactPerson" class="form-label">Contact Person</label>
+                <input asp-for="ContactPerson" class="form-control" readonly />
+                <span asp-validation-for="ContactPerson" class="text-danger"></span>
+            </div>
+            <!-- Warehouse -->
+            <div class="mb-3">
+                <label asp-for="SelectedWarehouseId" class="form-label">Pickup Warehouse</label>
+                <select asp-for="SelectedWarehouseId" class="form-select" asp-items="Model.WarehouseOptions">
+                    <option value="">-- Select Warehouse --</option>
+                </select>
+                <span asp-validation-for="SelectedWarehouseId" class="text-danger"></span>
+            </div>
+
+            <!-- Branch -->
+            <div class="mb-3">
+                <label asp-for="SelectedBranchId" class="form-label">Branch</label>
+                <select asp-for="SelectedBranchId" class="form-select" asp-items="Model.BranchOptions">
+                    <option value="">-- Select Branch --</option>
+                </select>
+                <span asp-validation-for="SelectedBranchId" class="text-danger"></span>
+            </div>
+
+            <!-- Pickup Date -->
+            <div class="mb-3">
+                <label asp-for="PreferredPickup" class="form-label"></label>
+                <input asp-for="PreferredPickup" class="form-control" type="date" />
+                <span asp-validation-for="PreferredPickup" class="text-danger"></span>
+            </div>
+
+            <!-- Special Instructions -->
+            <div class="mb-3">
+                <label asp-for="SpecialInstructions" class="form-label"></label>
+                <textarea asp-for="SpecialInstructions" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="SpecialInstructions" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <h4>Fridges in Your Cart</h4>
+            @if (Model.RequestedFridges != null && Model.RequestedFridges.Any())
+            {
+                @for (int i = 0; i < Model.RequestedFridges.Count; i++)
+                {
+                    var fridge = Model.RequestedFridges[i];
+                    <div class="card mb-3">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <img src="@(fridge.ImageUrl ?? "/images/default-fridge.png")" class="img-fluid rounded-start" alt="@fridge.Model" />
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title">@fridge.Model</h5>
+                                    <p>Quantity: @fridge.Quantity</p>
+                                    <p>Category: @fridge.SelectedCategory</p>
+
+                                    <!-- HIDDEN FIELDS FOR MODEL BINDING -->
+                                    <!-- These are crucial for the list to be re-posted to the controller -->
+                                    <input type="hidden" asp-for="RequestedFridges[@i].SelectedFridgeId" />
+                                    <input type="hidden" asp-for="RequestedFridges[@i].Quantity" />
+                                    <input type="hidden" asp-for="RequestedFridges[@i].Model" />
+                                    <input type="hidden" asp-for="RequestedFridges[@i].ImageUrl" />
+                                    <input type="hidden" asp-for="RequestedFridges[@i].SelectedCategory" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="text-muted">No fridges added to the cart yet. Please add fridges from the gallery.</p>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-info">Browse Fridges</a> @* Link to your fridge gallery *@
+            }
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <button type="submit" class="btn btn-primary">Submit Request</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

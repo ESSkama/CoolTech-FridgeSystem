@@ -1,0 +1,69 @@
+﻿@model FridgeSystem.Models.CustomerLocationViewModel
+
+@{
+    ViewData["Title"] = "Edit Branch";
+    var businessId = ViewBag.BusinessId as int? ?? 0;
+    var customerName = ViewBag.CustomerName as string ?? "Customer";
+}
+
+<h1 class="dashboard-title">@customerName - Edit Branch</h1>
+
+<div style="margin-bottom: 10px;">
+    <a asp-controller="CustomerLiaison" asp-action="CustomerLocations" asp-route-businessId="@businessId"
+       class="form-button" style="padding: 6px 14px; font-size: 15px;">← Back to Locations</a>
+</div>
+
+<div class="form-container" style="max-width: 650px; margin:auto;">
+    <form asp-action="EditLocation" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="LocationId" />
+        <input type="hidden" asp-for="BusinessId" />
+
+        <label class="form-label" asp-for="BranchName">Branch Name</label>
+        <input class="form-input" asp-for="BranchName" />
+        <span asp-validation-for="BranchName" class="text-danger"></span>
+
+        <label class="form-label" asp-for="AddressLine1">Address Line 1</label>
+        <input class="form-input" asp-for="AddressLine1" />
+        <span asp-validation-for="AddressLine1" class="text-danger"></span>
+
+        <label class="form-label" asp-for="AddressLine2">Address Line 2</label>
+        <input class="form-input" asp-for="AddressLine2" />
+        <span asp-validation-for="AddressLine2" class="text-danger"></span>
+
+        <label class="form-label" asp-for="City">City</label>
+        <input class="form-input" asp-for="City" />
+        <span asp-validation-for="City" class="text-danger"></span>
+
+        <label class="form-label" asp-for="Province">Province</label>
+        <input class="form-input" asp-for="Province" />
+        <span asp-validation-for="Province" class="text-danger"></span>
+
+        <label class="form-label" asp-for="Postcode">Postal Code</label>
+        <input class="form-input" asp-for="Postcode" />
+        <span asp-validation-for="Postcode" class="text-danger"></span>
+
+        <label class="form-label" asp-for="Telephone">Telephone</label>
+        <input class="form-input" asp-for="Telephone" />
+        <span asp-validation-for="Telephone" class="text-danger"></span>
+
+        <label class="form-label" asp-for="ContactPerson">Contact Person</label>
+        <input class="form-input" asp-for="ContactPerson" />
+        <span asp-validation-for="ContactPerson" class="text-danger"></span>
+
+        <div style="margin-top:10px;">
+            <label asp-for="IsActive">
+                <input asp-for="IsActive" type="checkbox" class="form-checkbox" /> Active
+            </label>
+        </div>
+
+        <div style="display:flex; gap:10px; margin-top:20px;">
+            <button type="submit" class="form-button btn-success">Save Changes</button>
+            <a asp-action="CustomerLocations" asp-route-businessId="@businessId" class="form-button btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

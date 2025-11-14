@@ -1,0 +1,101 @@
+﻿@model FridgeSystem.Models.FridgeRequest
+
+@{
+    ViewData["Title"] = $"Request Details #{Model.RequestId}";
+}
+
+<h1>Request Details #@Model.RequestId</h1>
+<hr />
+
+<div class="card mb-4">
+    <div class="card-header">
+        <h5>Request Summary</h5>
+    </div>
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-4">Request Date:</dt>
+            <dd class="col-sm-8">@Model.RequestDate.ToString("dd MMMM yyyy HH:mm")</dd>
+
+            <dt class="col-sm-4">Status:</dt>
+            <dd class="col-sm-8">
+                <span class="badge @(Model.Status == FridgeSystem.Models.RequestStatus.Pending ? "bg-warning" :
+                                    Model.Status == FridgeSystem.Models.RequestStatus.Approved ? "bg-success" :
+                                    Model.Status == FridgeSystem.Models.RequestStatus.Declined ? "bg-danger" :
+                                    "bg-info")">
+                    @Model.Status
+                </span>
+            </dd>
+
+            <dt class="col-sm-4">Total Quantity:</dt>
+            <dd class="col-sm-8">@Model.Quantity</dd> @* This assumes you kept the Quantity prop on FridgeRequest *@
+        </dl>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <h5>Contact & Pickup Info</h5>
+    </div>
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-4">Contact Number:</dt>
+            <dd class="col-sm-8">@Model.ContactNumber</dd>
+
+            <dt class="col-sm-4">Pickup Warehouse:</dt>
+            <dd class="col-sm-8">@Model.Warehouse.Name (@Model.Warehouse.City)</dd>
+
+            <dt class="col-sm-4">Preferred Pickup Date:</dt>
+            <dd class="col-sm-8">@Model.PreferredPickup.ToShortDateString()</dd>
+
+            <dt class="col-sm-4">Special Instructions:</dt>
+            <dd class="col-sm-8">@(string.IsNullOrEmpty(Model.SpecialInstructions) ? "None" : Model.SpecialInstructions)</dd>
+        </dl>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <h5>Requested Fridges</h5>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Fridge Model</th>
+                    <th>Category</th>
+                    <th>Specification</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.FridgeRequestItems != null && Model.FridgeRequestItems.Any())
+                {
+                    @foreach (var item in Model.FridgeRequestItems)
+                    {
+                        <tr>
+                            <td>@item.Fridge.Model</td>
+                            <td>@item.Fridge.Category</td>
+                            <td>@item.Fridge.Specification</td>
+                            <td>@item.Quantity</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="4" class="text-center">No fridges requested for this order.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="mt-4">
+    <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Back to My Requests</a>
+    @* Add more actions here, e.g., Cancel Request if status allows *@
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css"></script>
+}

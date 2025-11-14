@@ -1,0 +1,45 @@
+﻿@model IEnumerable<FridgeSystem.Models.ViewModels.StockAlertViewModel>
+
+<div class="form-container">
+    <h1>Stock Alert</h1>
+    <p>View stock alerts and low inventory here.</p>
+
+    <a asp-controller="InventoryLiaison" asp-action="Dashboard" class="btn btn-secondary mb-3">Back to Dashboard</a>
+</div>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Model</th>
+                <th>Category</th>
+                <th>Quantity In Stock</th>
+                <th>Supplier</th>
+                <th>Last Updated</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Model</td>
+                    <td>@item.Category</td>
+                    <td>@item.QuantityInStock</td>
+                    <td>@item.SupplierName</td>
+                    <td>@item.LastUpdate.ToString("g")</td>
+                    <td>
+                        <a asp-controller="InventoryLiaison" asp-action="CreatePurchaseRequest" asp-route-inventoryId="@item.InventoryId" class="btn btn-success btn-sm">
+                            Create Purchase Request
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p class="text-muted">No low-stock items found.</p>
+}
