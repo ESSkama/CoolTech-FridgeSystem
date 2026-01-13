@@ -44,3 +44,16 @@ Fault Technician	View and resolve faults, update maintenance history
 Admin	Manage staff, manage clients & branches, monitor fridges
 Submit a maintenance/fault report after completing the work.
 
+LOGIN CREDENTIALS: 
+ADMIN: 
+ username: admin@cooltech.com
+ password: Admin@123
+
+FAULT TECHNICIAN
+ username: faulttech@cooltech.com
+ password: FaultTech@123
+
+CUSTOMER
+username: contact@spar.co.za
+password: Customer@123
+
